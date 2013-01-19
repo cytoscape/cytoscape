@@ -5,6 +5,6 @@
 		<project path=".cy3" name="cytoscape">
 			<copyfile src="README.md" dest="README.md" />
 		</project>
-		<project name="cytoscape-parent" />
-		<project name="cytoscape-api" />
+		<project name="cytoscape-parent" revision="develop" />
+		<project name="cytoscape-api" revision="develop" />
 </manifest>
