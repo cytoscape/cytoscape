@@ -2,7 +2,7 @@
 <manifest>
 	<remote name="github" fetch="git://github.com/cytoscape/" review="www.cytoscape.org" />
 	<default revision="master" remote="github" />
-		<project path=".welcome" name="cy3">
+		<project path=".cy3" name="cytoscape">
 			<copyfile src="README.md" dest="README.md" />
 		</project>
 		<project name="cytoscape-parent" />
