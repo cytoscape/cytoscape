@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
 	<remote name="origin" fetch="https://github.com/cytoscape" review="www.cytoscape.org" />
-	<default revision="remotes/origin/master" remote="origin" />
+	<default revision="master" remote="remotes/origin" />
 		<project path=".cy3" name="cytoscape">
 			<copyfile src="README.md" dest="README.md" />
 		</project>
-		<project name="cytoscape-parent" path="parent" revision="remotes/origin/develop" />
-		<project name="cytoscape-api" path="api" revision="remotes/origin/develop" />
+		<project name="cytoscape-parent" path="parent" revision="develop" />
+		<project name="cytoscape-api" path="api" revision="develop" />
 </manifest>
