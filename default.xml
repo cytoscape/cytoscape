@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-	<remote name="origin" fetch="git://github.com/cytoscape" review="www.cytoscape.org" />
+	<remote name="origin" fetch="https://github.com/cytoscape" review="www.cytoscape.org" />
 	<default revision="master" remote="origin" />
 		<project path=".cy3" name="cytoscape">
 			<copyfile src="README.md" dest="README.md" />
