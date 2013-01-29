@@ -41,8 +41,6 @@ repo sync
 
 You can clone Cytoscape 3 project manually if you want.
 
-
-
 ## Build
 From the top directory, type:
 ```
