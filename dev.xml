@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+	<remote name="origin" fetch="git+ssh://git@github.com/cytoscape" review="www.cytoscape.org" />
+	<default revision="master" remote="origin" />
+		<project path=".cy3" name="cytoscape">
+			<copyfile src="README.md" dest="README.md" />
+			<copyfile src="pom.xml" dest="pom.xml" />
+		</project>
+		<project name="cytoscape-parent" path="parent" />
+		<project name="cytoscape-api" path="api" />
+		<project name="cytoscape-impl" path="impl" />
+		<project name="cytoscape-support" path="support" />
+		<project name="cytoscape-gui-distribution" path="gui-distribution" />
+		<project name="cytoscape-headless-distribution" path="headless-distribution" />
+</manifest>
