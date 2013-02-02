@@ -18,5 +18,6 @@
 		<module>app-developer</module>
 		<module>gui-distribution</module>
 		<module>headless-distribution</module>
+		<module>samples</module>
 	</modules>
 </project> 
