@@ -24,6 +24,7 @@ If you want to clone all sub-projects at once, you also need:
 * [Repo](http://code.google.com/p/git-repo/)
 
 ## Cytoscape 3 Project Structure
+* Parent
 * API
 * Impl
 * Support
