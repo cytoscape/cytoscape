@@ -5,6 +5,9 @@
 #
 #####################################
 
+###############################################
+# Checkout, pull, and build the latest version.
+###############################################
 function prepare {
 
 	echo "\n\n - Available branches:\n\n"
@@ -18,9 +21,11 @@ function prepare {
 
 	echo "\n\nBuilding Cytoscape for testing...\n\n"
 	mvn clean install || { echo Build Failed; exit 1; }
-
 }
 
+###########################################################
+# Build modified (version updated) version for testing.
+###########################################################
 function buildNewVersion {
 	echo "\n\nBuilding new version ($version) of Cytoscape for testing...\n\n"
 	mvn clean install || { echo Build Failed; exit 1; }
@@ -36,13 +41,20 @@ function updateVersionNumbers {
 
 function updateProperties {
 	echo "\n\n - Updating version numbers in properties..."
-	#grep -n -G '^\t*<cytoscape\.' < pom.xml | sed -E -e "s/-SNAPSHOT//g" | sed -e 's/>/##/g' | sed -e 's/<//g' | awk -F"##" '{ print $1 " == " $2 }'
+	sed -E -e "s/-SNAPSHOT//g" pom.xml > pom.updated.xml
+#		| sed -e 's/>/##/g' | sed -e 's/<//g' | awk -F"##" '{ print $1 " == " $2 }'
 
-	#sed -e "s/<cytoscape.api.version>$version-SNAPSHOT<\/cytoscape.api.version>/<cytoscape.api.version>$version<\/cytoscape.api.version>/g" pom.xml | 
-	#sed -e "s/<cytoscape.impl.version>$version-SNAPSHOT<\/cytoscape.impl.version>/<cytoscape.impl.version>$version<\/cytoscape.impl.version>/g" | 
-	#sed -e "s/<cytoscape.distribution.version>$version-SNAPSHOT<\/cytoscape.distribution.version>/<cytoscape.distribution.version>$version<\/cytoscape.distribution.version>/g" | tee pom.updated.xml
+	echo "\n\n - Here is the changes:\n\n"
+	diff pom.xml pom.updated.xml
 
-	#mv pom.updated.xml pom.xml
+	printf "\n\n Do you want to update pom.xml files? [Y to proceed]: "
+	read proceed
+	if [[ $answer != 'Y' || -z $answer ]]; then
+		echo "Abort\n"
+		exit 0
+	fi
+	
+	mv pom.updated.xml pom.xml
 }
 
 
@@ -84,6 +96,7 @@ fi
 cd impl
 echo "\n\n - Processing impl bundles...\n"
 updateProperties
+
 
 # IMPL bundles
 #prepare
