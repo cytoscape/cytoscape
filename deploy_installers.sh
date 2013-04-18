@@ -1,25 +1,20 @@
 #!/bin/sh
-
-###############################################################################
+################################################################################
 #
 # Build & Upload Installers 
 #   Currently this script works only on Kei's Mac.
 #
-###############################################################################
-
-CMDNAME=$(basename $0)
-
-##########################
 # Options:
 #
 #  -a: Upload API docs
 #  -u: Update API and IMPL bundles
 #
-###########################
+################################################################################
 
+CMDNAME=$(basename $0)
 ERROR_MESSAGE="Usage: $CMDNAME [-a] [-u] branch_name"
 
-while getopts 'aub:' OPT
+while getopts 'au' OPT
 do
 	case $OPT in
 		a)	FLG_A=1 ;;

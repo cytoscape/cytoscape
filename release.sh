@@ -153,12 +153,6 @@ function updateVersionNumbers {
 function updateProperties {
 	echo "\n\n - Updating version numbers in properties..."
 	sed -E -e "s/-SNAPSHOT//g" pom.xml > pom.updated.xml
-
-	echo "\n\n - Here is the changes:\n\n"
-	diff pom.xml pom.updated.xml
-
-	echo "\n\n Do you want to update pom.xml files?"
-	confirm
 	mv pom.updated.xml pom.xml
 }
 
@@ -173,11 +167,6 @@ function updateFeatures {
 	sed -E -e "s/-SNAPSHOT//g" features.xml > features.updated.xml
 	
 	echo "\n\n - Here is the changes:\n\n"
-	diff features.xml features.updated.xml
-
-	printf "\n\n Do you want to update features.xml files? [Y to proceed]: "
-	confirm
-
 	mv features.updated.xml features.xml
 	cd -
 }
@@ -262,13 +251,17 @@ cd ../impl
 echo "\n\n - Releasing impl bundles...\n"
 
 prepare
+
+# Make sure everything works fine.
+mvn clean install || { echo Could not build SNAPSHOT version.  Fix this problem first before release.; exit 1; }
+
 updateVersionNumbers
 updateProperties
 
 ##### Update Help from Wiki #####
 cd help-impl
 #ant update
-#mvn clean install
+mvn clean install
 
 ##### Need to commit new manual #####
 #git add src/docbkx/manual.xml
@@ -320,7 +313,11 @@ cd ../app-developer || { echo Could not find app developer directory.; exit 1; }
 echo "\n\n - Releasing app developer...\n"
 
 prepare
-updateVersionNumbers
+
+# Special case:  Need to use specific profile to include packaging
+mvn -P release versions:set -DnewVersion=$version || { echo Could not update project version.; exit 1; }
+mvn -P release versions:commit || { echo Could not commit change to the version number.; exit 1; }
+
 updateProperties
 
 buildNewVersion
