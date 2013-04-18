@@ -113,10 +113,6 @@ function prepare {
 	echo "\n\n - Pulling changes from github remote repository:\n\n$(git remote -v)\n\n"
 	git pull || { echo Could not pull the changes from remote; exit 1; }
 
-	# Make sure we can build the latest version before making changes to pom.xml.
-	echo "\n\nBuilding Cytoscape for testing...\n\n"
-	mvn clean install || { echo Build Failed; exit 1; }
-
 }
 
 
@@ -210,8 +206,8 @@ function confirm {
 #####################################################################
 function mergeAndTag {
 
-	git diff --stat
-	confirm
+	#git diff --stat
+	#confirm
 
 	# First, commit the pom files with new version numbers
 	git commit -am "Version numbers are updated to $version.  This will be tagged to $version release."
@@ -258,8 +254,6 @@ cd ..
 mergeAndTag
 
 echo "\n - API bundles released."
-confirm
-
 
 #######################################
 # Release IMPL bundles
@@ -273,12 +267,12 @@ updateProperties
 
 ##### Update Help from Wiki #####
 cd help-impl
-ant update
-mvn clean install
+#ant update
+#mvn clean install
 
 ##### Need to commit new manual #####
-git add src/docbkx/manual.xml
-git commit -m "Manual XML document updated for $version release."
+#git add src/docbkx/manual.xml
+#git commit -m "Manual XML document updated for $version release."
 
 cd ..
 
@@ -286,8 +280,6 @@ buildNewVersion
 mergeAndTag
 
 echo "\n - IMPL bundles released."
-confirm
-
 
 #######################################
 # Release GUI-Distribution
@@ -308,8 +300,15 @@ cp target/classes/images/CytoscapeSplashScreen.png ../packaging/src/main/images/
 ##### Commit changes to local repository
 git add ../packaging/src/main/images/CytoscapeSplashScreen.png
 git commit -m "Splash Screen image file had been updated for $version release."
+cd ..
 
 buildNewVersion
+
+##### Build installers #####
+cd packaging
+mvn clean install || { echo Could not create installers.; exit 1; }
+cd ..
+
 mergeAndTag
 
 echo "\n - GUI-Distribution released."
@@ -317,15 +316,17 @@ echo "\n - GUI-Distribution released."
 #######################################
 # Release App-developer bundle
 #######################################
-cd ../app-developer
+cd ../app-developer || { echo Could not find app developer directory.; exit 1; }
 echo "\n\n - Releasing app developer...\n"
 
 prepare
 updateVersionNumbers
 updateProperties
-updateFeatures
 
 buildNewVersion
+
+##### ZIP Javadoc #####
+
 mergeAndTag
 
 cd ..
