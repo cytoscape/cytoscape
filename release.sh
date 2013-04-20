@@ -260,12 +260,12 @@ updateProperties
 
 ##### Update Help from Wiki #####
 cd help-impl
-#ant update
+ant update
 mvn clean install
 
 ##### Need to commit new manual #####
-#git add src/docbkx/manual.xml
-#git commit -m "Manual XML document updated for $version release."
+git add src/docbkx/manual.xml
+git commit -m "Manual XML document updated for $version release."
 
 cd ..
 
