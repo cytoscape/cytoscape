@@ -6,3 +6,13 @@
 *.jar
 *.war
 *.ear
+
+api
+app-developer
+gui-distribution
+headless-distribution
+impl
+parent
+samples
+support
+api
