@@ -15,8 +15,8 @@
 		<module>api</module>
 		<module>impl</module>
 		<module>support</module>
-		<module>app-developer</module>
 		<module>gui-distribution</module>
+		<module>app-developer</module>
 		<module>samples</module>
 	</modules>
 </project> 
