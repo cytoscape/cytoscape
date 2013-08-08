@@ -13,5 +13,4 @@
 		<project name="cytoscape-gui-distribution" path="gui-distribution" />
 		<project name="cytoscape-headless-distribution" path="headless-distribution" />
 		<project name="cytoscape-app-developer" path="app-developer" />
-		<project name="cytoscape-samples" path="samples" />
 </manifest>
