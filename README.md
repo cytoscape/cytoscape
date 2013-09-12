@@ -15,7 +15,8 @@ http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper
 You need the following tools to build Cytoscape 3:
 
 * JDK 6 or later
-* Maven 3.0.x - 3.1.x is not supported as of 9/11/2013
+* Maven 3.0.x series
+    * The latest version of maven is 3.1.0, but we have not tested the build system with 3.1 as of 9/11/2013
 * Git
 * [git-flow](https://github.com/nvie/gitflow)
 * [cy](https://github.com/cytoscape/cytoscape-scripts/releases/tag/1.2.0) - Utility script for Cytoscape developers
