@@ -1,3 +1,12 @@
+api/
+impl/
+app-developer/
+headless-distribution/
+gui-distribution/
+.cy3/
+parent/
+samples/
+support/
 .DS_Store
 .project
 *.class

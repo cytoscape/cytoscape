@@ -5,7 +5,7 @@
 	<groupId>org.cytoscape</groupId>
 	<artifactId>project</artifactId>
 	<packaging>pom</packaging>
-	
+
 	<!-- This version number should be same as parent (for consistency) -->
 	<version>3.1.0-SNAPSHOT</version>
 	<name>Cytoscape Project POM</name>
@@ -19,4 +19,4 @@
 		<module>headless-distribution</module>
 		<module>app-developer</module>
 	</modules>
-</project> 
+</project>
