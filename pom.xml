@@ -16,7 +16,7 @@
 		<module>impl</module>
 		<module>support</module>
 		<module>gui-distribution</module>
-		<module>headless-distribution</module>
+		<!-- module>headless-distribution</module -->
 		<module>app-developer</module>
 	</modules>
 </project>
