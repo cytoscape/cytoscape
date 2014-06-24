@@ -87,4 +87,9 @@ mvn -fae clean install
 The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail.  When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
+# Windows Notes
+
+The Windows command line does not execute **cy** scripts, so you must execute it from within the Git Bash window within the Git GUI. However, the Git GUI doesn't present the Git Bash menu item until you have already created a repository. To get around this, create a new repository Test, and then start Git Bash.
+
+The **cy init** script attempts to fetch repositories into the current directory. If the current directory has an element containing a blank (e.g., c:\users\My Account), **cy** will fail.
 
