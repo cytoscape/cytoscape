@@ -91,6 +91,7 @@ is done, you can find the application in `gui-distribution/assembly/target/cytos
 ## Notes for Windows Developers
 Windows implementations of Git and other tools differ slightly from the above.
 
-- The Windows Git installer creates two application shortcuts: Git Bash and Git GUI. You should use Git Bash for command line operations.
-- When executing the "cy init" script, be user that your current path contains no blanks. The "cy" script's path parser does not understand blanks.
-- 
+* The Windows Git installer creates two application shortcuts: Git Bash and Git GUI. You should use Git Bash for command line operations.
+ 
+* When executing the `cy init` script, be user that your current path contains no blanks. The `cy` script's path parser does not understand blanks.
+
