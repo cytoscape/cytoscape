@@ -113,4 +113,6 @@ Windows implementations of Git and other tools differ slightly from the above.
 
 * To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install`.
 
+* Valuable additional information: http://wiki.cytoscape.org/Cytoscape_3/CoreDevelopment
+
 
