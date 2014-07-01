@@ -97,7 +97,7 @@ Windows implementations of Git and other tools differ slightly from the above.
 
 * You can follow the Git SSH instructions to create your SSH key, but when you start the SSH agent, use `eval $(ssh-agent)` instead of `eval 'ssh-agent' -s`.
 
-* When running `cy init`, if you get "flags: FATAL unable to determine getopt version" somewhere in the output, you must be sure to put `getopt' in your PATH. The default location for `getopt` is `C:\Program Files (x86)\GnuWin32\bin`.
+* When running `cy init`, if you get "flags: FATAL unable to determine getopt version" somewhere in the output, you must be sure to put `getopt` in your PATH. The default location for `getopt` is `C:\Program Files (x86)\GnuWin32\bin`.
 
 ## Notes for All Developers
 
