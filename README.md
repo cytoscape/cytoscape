@@ -78,7 +78,7 @@ cy switch BRANCH_NAME
 
 where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape sub-projects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
 
-## Building the core
+## Building the Core
 From the top directory, type:
 ```
 mvn -fae clean install
@@ -87,4 +87,6 @@ mvn -fae clean install
 The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail.  When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
+
+# Notes for Windows Developers
 
