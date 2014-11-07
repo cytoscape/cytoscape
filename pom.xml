@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 
 	<!-- This version number should be same as parent (for consistency) -->
-	<version>3.1.0</version>
+	<version>3.2.0</version>
 	<name>Cytoscape Project POM</name>
 
 	<modules>
@@ -16,7 +16,6 @@
 		<module>impl</module>
 		<module>support</module>
 		<module>gui-distribution</module>
-		<!-- module>headless-distribution</module -->
 		<module>app-developer</module>
 	</modules>
 </project>
