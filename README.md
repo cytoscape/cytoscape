@@ -37,7 +37,7 @@ You need the following tools to build Cytoscape 3:
 
 1. Install JDK, maven, git, and git-flow.
 1. Download latest version of [cy script](https://github.com/cytoscape/cytoscape-scripts/releases/) and unzip it to your local disk.
-1. **cy** command is a shell script.  You need to change permission to execute it.
+1. **cy** command is a shell script.  You need to change permission to execute it. (In Ubuntu Linux, please replace **cy** with **bash cy** in the following commands. This is because Ubuntu's /bin/sh is not symbolic link of bash.)
 1. Execute the following command:
 
 #### Core Developers
