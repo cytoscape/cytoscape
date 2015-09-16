@@ -16,8 +16,7 @@ You need the following tools to build latest development version of Cytoscape 3:
 * [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or later
 * [Maven 3](https://maven.apache.org/) (Tested with 3.3.3)
 * [Git](https://git-scm.com/)
-* [git-flow](https://github.com/nvie/gitflow) (optional)
-* cy - Utility script for building Cytoscape core distribution. 
+* _cy.sh_ - Utility script for building Cytoscape core distribution. 
 
 ### Cytoscape 3 Core Sub Projects
 Cytoscape source code is maintained in several GitHub repositories:
@@ -38,20 +37,45 @@ Instead of cloning each repository one-by-one, you can use utility script in thi
 ## Building Development Version of Cytoscape 3
 Here is the step-by-step guide to build Development version of Cytoscape.
 
+### Clone all sub-projects
 1. Install required tools: JDK, maven, git, and git-flow.
 1. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
 1. CD to the cloned directory: ```cd ./cytoscape```
-1. Execute the following command: ```./cy.sh init```
-1. Now you can see a new directory named **cytoscape**.  It should contains the following:
-    - README.md
-    - api
-    - app-developer
-    - gui-distribution
-    - impl
-    - parent
-    - pom.xml
-    - support
+1. Execute the following command: 
+    - Create new folder under current working directory: ```./cy.sh init```
+    - (Optional) Specify target directory: ```./cy.sh init /path/to/new/cytoscape/source/code```
+1. Now you can see a new directory named **cytoscape**:
 
+```
+    .
+├── README.md
+├── cy.sh
+├── cytoscape
+│   ├── README.md
+│   ├── api
+│   ├── app
+│   ├── app-developer
+│   ├── cy.sh
+│   ├── gui-distribution
+│   ├── impl
+│   ├── parent
+│   ├── pom.xml
+│   └── support
+└── pom.xml
+
+8 directories, 6 files
+```
+
+### Building Cytoscape
+1. Go into the _cytoscape_ directory ```cd ./cytoscape```
+1. Run Maven: ```mvn clean install```
+1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-20 minutes. 
+1. ```cd gui-distribution/assembry/cytoscape```
+1. Run development version of Cytoscape: 
+   - Mac/Linux: ```./cytoscape.sh```
+   - Windows: ```./cytoscape.bat```
+
+---
 
 ### Choosing a Branch
 Switching branches is easy with **cy** script.  Simply go to the top level directory and type:
