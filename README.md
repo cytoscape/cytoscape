@@ -1,72 +1,58 @@
-Cytoscape
-=========
+# Cytoscape Core Distribution: Building Guide
 
-This project contains metadata for working with all the Cytoscape core subprojects, each of which have their own Git repository.  Most people won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
+This repository contains top-level pom file and utility script for building entire Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
 
 If you are interested in building Cytoscape apps, you don't need to build Cytoscape from source.  You can follow the guide here:
 
 http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper
 
 
-# Getting Started with Cytoscape Source
+## Getting Started with Cytoscape Source Code
 
-## Requirements
+### Requirements
 
-You need the following tools to build Cytoscape 3:
+You need the following tools to build latest development version of Cytoscape 3:
 
-* JDK 6 or later
-* Maven 3.0.x series
-    * The latest version of maven is 3.1.0, but we have not tested the build system with 3.1 as of 9/11/2013
-* Git
-* [git-flow](https://github.com/nvie/gitflow)
-* [cy](https://github.com/cytoscape/cytoscape-scripts/releases/tag/1.2.0) - Utility script for Cytoscape developers
+* [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or later
+* [Maven 3](https://maven.apache.org/) (Tested with 3.3.3)
+* [Git](https://git-scm.com/)
+* [git-flow](https://github.com/nvie/gitflow) (optional)
+* cy - Utility script for building Cytoscape core distribution. 
 
-## Cytoscape 3 Core Subprojects
+### Cytoscape 3 Core Sub Projects
+Cytoscape source code is maintained in several GitHub repositories:
+
 * [parent](https://github.com/cytoscape/cytoscape-parent)
 * [api](https://github.com/cytoscape/cytoscape-api)
 * [impl](https://github.com/cytoscape/cytoscape-impl)
 * [support](https://github.com/cytoscape/cytoscape-support)
+* [app](https://github.com/cytoscape/cytoscape-app)
 * [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution)
-* [headless-distribution](https://github.com/cytoscape/cytoscape-headless-distribution)
 * [app-developer](https://github.com/cytoscape/cytoscape-app-developers)
 
-## Optional Projects
+Instead of cloning each repository one-by-one, you can use utility script in this repository to initialize your workspace at once.
+
+### Optional Projects
 * [samples](https://github.com/cytoscape/cytoscape-samples)
 
-## Cloning the Cytoscape 3 Subprojects
+## Building Development Version of Cytoscape 3
+Here is the step-by-step guide to build Development version of Cytoscape.
 
-1. Install JDK, maven, git, and git-flow.
-1. Download latest version of [cy script](https://github.com/cytoscape/cytoscape-scripts/releases/) and unzip it to your local disk.
-1. **cy** command is a shell script.  You need to change permission to execute it. (In Ubuntu Linux, please replace **cy** with **bash cy** in the following commands. This is because Ubuntu's /bin/sh is not symbolic link of bash.)
+1. Install required tools: JDK, maven, git, and git-flow.
+1. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
+1. CD to the cloned directory: ```cd ./cytoscape```
 1. Execute the following command:
-
-#### Core Developers
-
-```
-cy init
-```
-
-#### Other Developers
-
-```
-cy -r init
-```
-
-This clones read-only repository from github.
-
-
-Now you can find a new directory named **cytoscape**.  It should contains the following:
-
-
-- README.md
-- api
-- app-developer
-- gui-distribution
-- headless-distribution
-- impl
-- parent
-- pom.xml
-- support
+    - Core Developers:  ```./cy.sh init```
+    - Other Developers  ```./cy.sh -r init``` - This clones read-only repository from github.
+1. Now you can see a new directory named **cytoscape**.  It should contains the following:
+    - README.md
+    - api
+    - app-developer
+    - gui-distribution
+    - impl
+    - parent
+    - pom.xml
+    - support
 
 
 ### Choosing a Branch
