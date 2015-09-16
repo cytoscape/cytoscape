@@ -11,7 +11,6 @@
 #
 # Reqiirments:
 #   - git
-#   - git-flow
 #
 # By Keiichiro Ono (kono at ucsd edu)
 #
@@ -32,24 +31,18 @@ BASE_URL='git@github.com:cytoscape/cytoscape-'
 # Core Apps URL
 APP_URL='git@github.com:cytoscape/'
 
-NON_CORE_URL='git://github.com/cytoscape/cytoscape-'
-
 # Cytoscape repository names
 REPOSITORIES=(. parent api impl support app gui-distribution app-developer)
 
 # List of Core Apps
-CORE_APPS=(biopax command-dialog datasource-biogrid network-analyzer network-merge psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
-
+CORE_APPS=(biopax command-dialog cyREST datasource-biogrid network-analyzer network-merge psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
 
 #######################################
 # Handling command-line arguments     #
 #######################################
-while getopts 'hrd:' OPT
+while getopts 'hd:' OPT
 do
   case $OPT in
-    r)  FLG_R=1
-        echo " - Using read-only repository."
-        ;;
     h)  FLG_H=1
         echo "$HELP: $ERROR_MESSAGE"
         exit 0
@@ -114,7 +107,6 @@ function status {
   done
 
 }
-
 
 function switch {
   TARGET="${TARGET_DIR}"
@@ -202,8 +194,8 @@ function init {
         echo "Cloning: $REPO (URI = $REPO_URL)"
         git clone $REPO_URL $REPO || { echo Could not clone remote repository: $TARGET_DIR; exit 1; }
         pushd $REPO
-        git checkout master
-        git flow init -d
+        # git checkout master
+        # git flow init -d
         git checkout develop
         if [[ $REPO == "app" ]]; then
           echo "Initializing Core App Submodules..."
@@ -219,6 +211,7 @@ function init {
 }
 
 
+# Utility command to clone all Core Apps as independent repositories.
 function apps {
   mkdir ./apps
   cd apps

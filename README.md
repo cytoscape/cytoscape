@@ -41,9 +41,7 @@ Here is the step-by-step guide to build Development version of Cytoscape.
 1. Install required tools: JDK, maven, git, and git-flow.
 1. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
 1. CD to the cloned directory: ```cd ./cytoscape```
-1. Execute the following command:
-    - Core Developers:  ```./cy.sh init```
-    - Other Developers  ```./cy.sh -r init``` - This clones read-only repository from github.
+1. Execute the following command: ```./cy.sh init```
 1. Now you can see a new directory named **cytoscape**.  It should contains the following:
     - README.md
     - api
