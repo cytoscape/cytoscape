@@ -77,6 +77,26 @@ Here is the step-by-step guide to build Development version of Cytoscape.
 
 ---
 
+## New in 3.3.0: Core Apps
+___Core Apps___ are Cytoscape apps originally from the core distribution.  They have their own GitHub repositories and ___app___ directory is a placeholder for them.  This means projects under _app_ are ___submodules___, or references to specific commits.  Because of this, you need to follow the special procidure to update contents in those directories.
+
+### Updating Core Apps
+Assume you are in the top level directory of Cytoscpae project.
+
+1. ```cd app```
+1. Go into the directory.  For example, ```cd cyREST```
+1. Create new feature branch: ```git checkout -b my-new-feature```
+1. Write your code
+1. Add your changes to the branch: ```git add -A```
+1. Commit new changes to the branch: ```git commit -m "YOUR COMMENTS HERE..."```
+1. Go back to master: ```git checkout master```
+1. Merge the branch: ```git merge my-new-feature```
+1. Delete the feature branch: ```git branch -d my-new-feature```
+1. Push your changes to upstream: ```git push```
+1. ```cd ../```
+1. Update the pointer to the new commit: ```git add -am "YOUR COMMENTS HERE..."```
+1. Push the changes to upstream: ```git push```
+
 ### Choosing a Branch
 Switching branches is easy with **cy** script.  Simply go to the top level directory and type:
 
