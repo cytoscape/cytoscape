@@ -70,7 +70,7 @@ Here is the step-by-step guide to build Development version of Cytoscape.
 1. Go into the _cytoscape_ directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install```
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-20 minutes. 
-1. ```cd gui-distribution/assembry/cytoscape```
+1. ```cd gui-distribution/assembly/target/cytoscape```
 1. Run development version of Cytoscape: 
    - Mac/Linux: ```./cytoscape.sh```
    - Windows: ```./cytoscape.bat```
