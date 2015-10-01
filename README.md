@@ -9,6 +9,7 @@ http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper
 
 ## Getting Started with Cytoscape Source Code
 
+
 ### Requirements
 
 You need the following tools to build latest development version of Cytoscape 3:
@@ -36,6 +37,7 @@ Instead of cloning each repository one-by-one, you can use utility script in thi
 
 ## Building Development Version of Cytoscape 3
 Here is the step-by-step guide to build Development version of Cytoscape.
+
 
 ### Clone all sub-projects
 1. Install required tools: JDK, maven, git, and git-flow.
@@ -94,7 +96,7 @@ Assume you are in the top level directory of Cytoscpae project.
 1. Delete the feature branch: ```git branch -d my-new-feature```
 1. Push your changes to upstream: ```git push```
 1. ```cd ../```
-1. Update the pointer to the new commit: ```git add -am "YOUR COMMENTS HERE..."```
+1. Update the pointer to the new commit: ```git commit -am "YOUR COMMENTS HERE..."```
 1. Push the changes to upstream: ```git push```
 
 ### Choosing a Branch
