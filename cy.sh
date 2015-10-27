@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # @(#) cy version 2.0.0 9/15/2015
 #
