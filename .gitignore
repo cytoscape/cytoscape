@@ -4,6 +4,7 @@ app-developer/
 headless-distribution/
 gui-distribution/
 .cy3/
+app/
 parent/
 samples/
 support/
