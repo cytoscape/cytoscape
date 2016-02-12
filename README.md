@@ -26,7 +26,6 @@ Cytoscape source code is maintained in several GitHub repositories:
 * [api](https://github.com/cytoscape/cytoscape-api)
 * [impl](https://github.com/cytoscape/cytoscape-impl)
 * [support](https://github.com/cytoscape/cytoscape-support)
-* [app](https://github.com/cytoscape/cytoscape-app)
 * [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution)
 * [app-developer](https://github.com/cytoscape/cytoscape-app-developers)
 
@@ -55,7 +54,6 @@ Here is the step-by-step guide to build Development version of Cytoscape.
 ├── cytoscape
 │   ├── README.md
 │   ├── api
-│   ├── app
 │   ├── app-developer
 │   ├── cy.sh
 │   ├── gui-distribution
@@ -79,26 +77,6 @@ Here is the step-by-step guide to build Development version of Cytoscape.
 
 ---
 
-## New in 3.3.0: Core Apps
-___Core Apps___ are Cytoscape apps originally from the core distribution.  They have their own GitHub repositories and ___app___ directory is a placeholder for them.  This means projects under _app_ are ___submodules___, or references to specific commits.  Because of this, you need to follow the special procidure to update contents in those directories.
-
-### Updating Core Apps
-Assume you are in the top level directory of Cytoscpae project.
-
-1. ```cd app```
-1. Go into the directory.  For example, ```cd cyREST```
-1. Create new feature branch: ```git checkout -b my-new-feature```
-1. Write your code
-1. Add your changes to the branch: ```git add -A```
-1. Commit new changes to the branch: ```git commit -m "YOUR COMMENTS HERE..."```
-1. Go back to master: ```git checkout master```
-1. Merge the branch: ```git merge my-new-feature```
-1. Delete the feature branch: ```git branch -d my-new-feature```
-1. Push your changes to upstream: ```git push```
-1. ```cd ../```
-1. Update the pointer to the new commit: ```git commit -am "YOUR COMMENTS HERE..."```
-1. Push the changes to upstream: ```git push```
-
 ### Choosing a Branch
 Switching branches is easy with **cy** script.  Simply go to the top level directory and type:
 
@@ -117,6 +95,19 @@ mvn -fae clean install
 The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail.  When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
+## New in 3.3.0: Core Apps
+___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
+
+### Checking out core apps
+Assume you are in the top level directory of Cytoscape project. ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory
+
+### Updating core apps
+When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow. Before releasing, the version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
+
+1. Deploy to Nexus using ```mvn deploy``` - note that you will need to have our repository properly configured in ~/.m2/settings.xml to do this.
+1. Update the gui-distribution/assembly/pom.xml file in Cytoscape core to depend on the new version of the core app.
+1. Submit the new core app to the App Store using the web-based submission process at apps.cytoscape.org.
+1. Update the core app's version for future development - i.e. if the last release was 3.3.1, update it to 3.3.2-SNAPSHOT.
 
 ## Notes for Windows Developers
 Windows implementations of Git and other tools differ slightly from the above.
@@ -144,5 +135,7 @@ Windows implementations of Git and other tools differ slightly from the above.
 * To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install`.
 
 * Valuable additional information: http://wiki.cytoscape.org/Cytoscape_3/CoreDevelopment
+
+
 
 
