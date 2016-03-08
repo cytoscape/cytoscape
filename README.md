@@ -114,7 +114,7 @@ Windows implementations of Git and other tools differ slightly from the above.
 
 * The Windows Git installer creates two application shortcuts: Git Bash and Git GUI. You should use Git Bash for command line operations.
  
-* When executing the `cy init` script, be user that your current path contains no blanks. The `cy` script's path parser does not understand blanks.
+* When executing the `cy init` script, be sure that your current path contains no blanks. The `cy` script's path parser does not understand blanks.
 
 * You can follow the Git SSH instructions to create your SSH key, but when you start the SSH agent, use `eval $(ssh-agent)` instead of `eval 'ssh-agent' -s`.
 
