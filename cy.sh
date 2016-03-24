@@ -35,7 +35,7 @@ APP_URL='git@github.com:cytoscape/'
 REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 
 # List of Core Apps
-CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid network-analyzer network-merge opencl-cycl opencl-layout psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
+CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid json network-analyzer network-merge opencl-cycl opencl-layout psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
 
 #######################################
 # Handling command-line arguments     #
