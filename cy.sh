@@ -32,10 +32,10 @@ BASE_URL='git@github.com:cytoscape/cytoscape-'
 APP_URL='git@github.com:cytoscape/'
 
 # Cytoscape repository names
-REPOSITORIES=(. parent api impl support app gui-distribution app-developer)
+REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 
 # List of Core Apps
-CORE_APPS=(biopax command-dialog cyREST datasource-biogrid network-analyzer network-merge opencl-cycl opencl-layout psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
+CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid json network-analyzer network-merge opencl-cycl opencl-layout psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
 
 #######################################
 # Handling command-line arguments     #
@@ -197,11 +197,6 @@ function init {
         # git checkout master
         # git flow init -d
         git checkout develop
-        if [[ $REPO == "app" ]]; then
-          echo "Initializing Core App Submodules..."
-          git submodule init
-          git submodule update
-        fi
         popd
     fi
   done
