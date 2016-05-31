@@ -17,7 +17,9 @@ You need the following tools to build latest development version of Cytoscape 3:
 * [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or later
 * [Maven 3](https://maven.apache.org/) (Tested with 3.3.3)
 * [Git](https://git-scm.com/)
-* _cy.sh_ - Utility script for building Cytoscape core distribution. 
+* [_cy.sh_](https://github.com/cytoscape/cytoscape-scripts) - Utility script for building Cytoscape core distribution. 
+
+While you can use any tool to build Cytoscape 3, a popular tool for this is Eclipse, which has its own Maven and Git support.
 
 ### Cytoscape 3 Core Sub Projects
 Cytoscape source code is maintained in several GitHub repositories:
