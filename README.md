@@ -4,7 +4,7 @@ This repository contains top-level pom file and utility script for building enti
 
 If you are interested in building Cytoscape apps, you don't need to build Cytoscape from source.  You can follow the guide here:
 
-http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper
+http://www.cytoscape.org/documentation_developers.html
 
 
 ## Getting Started with Cytoscape Source Code
