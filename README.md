@@ -19,10 +19,10 @@ You need the following tools to build latest development version of Cytoscape 3:
 * [Git](https://git-scm.com/)
 * [_cy.sh_](https://github.com/cytoscape/cytoscape-scripts) - Utility script for building Cytoscape core distribution. 
 
-While you can use any tool to build Cytoscape 3, a popular tool for this is Eclipse, which has its own Maven and Git support.
+While you can use any tool to build Cytoscape 3, a popular tool for this is Eclipse, which has its own Maven and Git support, too.
 
-### Cytoscape 3 Core Sub Projects
-Cytoscape source code is maintained in several GitHub repositories:
+### Cytoscape 3 Core Main and Sub Projects
+Cytoscape source code is maintained in several GitHub repositories, and is organized into a main project and several sub-projects:
 
 * [parent](https://github.com/cytoscape/cytoscape-parent)
 * [api](https://github.com/cytoscape/cytoscape-api)
@@ -31,26 +31,35 @@ Cytoscape source code is maintained in several GitHub repositories:
 * [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution)
 * [app-developer](https://github.com/cytoscape/cytoscape-app-developers)
 
-Instead of cloning each repository one-by-one, you can use utility script in this repository to initialize your workspace at once.
+Instead of cloning each sub-project's repository one-by-one, you can use the utility script in the Cytoscape repository to initialize your workspace all at once (see below).
 
 ### Optional Projects
 * [samples](https://github.com/cytoscape/cytoscape-samples)
 
 ## Building Development Version of Cytoscape 3
-Here is the step-by-step guide to build Development version of Cytoscape.
+Here is the step-by-step guide to build a development version of Cytoscape.
 
-
-### Clone all sub-projects
+### Clone the Main Project
 1. Install required tools: JDK, maven, git, and git-flow.
 1. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
-1. CD to the cloned directory: ```cd ./cytoscape```
+    - Now you can see a new directory named **cytoscape**:
+
+```
+cytoscape
+├── README.md
+├── cy.sh
+└── pom.xml
+```
+
+### Clone the SubProjects
+1. CD to the cloned main project directory: ```cd ./cytoscape```
 1. Execute the following command: 
     - Create new folder under current working directory: ```./cy.sh init```
     - (Optional) Specify target directory: ```./cy.sh init /path/to/new/cytoscape/source/code```
-1. Now you can see a new directory named **cytoscape**:
+1. Now you can see a new sub-directory (also) named **cytoscape**, which contains the subprojects:
 
 ```
-    .
+cytoscape
 ├── README.md
 ├── cy.sh
 ├── cytoscape
@@ -77,7 +86,15 @@ Here is the step-by-step guide to build Development version of Cytoscape.
    - Mac/Linux: ```./cytoscape.sh```
    - Windows: ```./cytoscape.bat```
 
----
+## Building the Core
+From the *cytoscape/cytoscape* directory, type:
+```
+mvn -fae clean install
+```
+
+The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail. (Current unit tests
+do fail during the first few compiles, but eventually pass.) When Maven
+is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
 ### Choosing a Branch
 Switching branches is easy with **cy** script.  Simply go to the top level directory and type:
@@ -87,15 +104,6 @@ cy switch BRANCH_NAME
 ```
 
 where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape sub-projects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
-
-## Building the Core
-From the top directory, type:
-```
-mvn -fae clean install
-```
-
-The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail.  When Maven
-is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
 ## New in 3.3.0: Core Apps
 ___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
