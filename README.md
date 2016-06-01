@@ -76,7 +76,7 @@ cytoscape
 ```
 
 ### Building Cytoscape
-1. Go into the *cytoscape* sub-directory ```cd ./cytoscape```
+1. Go into the **cytoscape** sub-directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install```
     - Option: use ```mvn -fae clean install``` (... see below)
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes. 
