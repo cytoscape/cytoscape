@@ -19,7 +19,7 @@ You need the following tools to build latest development version of Cytoscape 3:
 * [Git](https://git-scm.com/)
 * [_cy.sh_](https://github.com/cytoscape/cytoscape-scripts) - Utility script for building Cytoscape core distribution. 
 
-While you can use any tool to build Cytoscape 3, a popular tool for this is Eclipse, which has its own Maven and Git support, too.
+While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
 
 ### Cytoscape 3 Core Main and Sub Projects
 Cytoscape source code is maintained in several GitHub repositories, and is organized into a main project and several sub-projects:
