@@ -73,8 +73,6 @@ cytoscape
 │   ├── pom.xml
 │   └── support
 └── pom.xml
-
-8 directories, 6 files
 ```
 
 ### Building Cytoscape
