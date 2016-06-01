@@ -78,26 +78,21 @@ cytoscape
 ```
 
 ### Building Cytoscape
-1. Go into the _cytoscape_ directory ```cd ./cytoscape```
+1. Go into the _cytoscape_ sub-directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install```
-1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-20 minutes. 
+    - Option: Use ```mvn -fae clean install``` ... see below
+1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes. 
 1. ```cd gui-distribution/assembly/target/cytoscape```
 1. Run development version of Cytoscape: 
    - Mac/Linux: ```./cytoscape.sh```
    - Windows: ```./cytoscape.bat```
-
-## Building the Core
-From the *cytoscape/cytoscape* directory, type:
-```
-mvn -fae clean install
-```
 
 The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail. (Current unit tests
 do fail during the first few compiles, but eventually pass.) When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
 ### Choosing a Branch
-Switching branches is easy with **cy** script.  Simply go to the top level directory and type:
+If your Cytoscape project has Git branches, you can switch branches easily with **cy** script.  Simply go to the main project *cytoscape* directory and type:
 
 ```
 cy switch BRANCH_NAME
