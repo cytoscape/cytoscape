@@ -62,7 +62,7 @@ cytoscape     <= parent level directory
 cytoscape     <= parent level directory
 ├── README.md
 ├── cy.sh
-├── cytoscape     <= sub-project directory
+├── cytoscape     <= sub-project sub-directory
 │   ├── README.md
 │   ├── api
 │   ├── app-developer
