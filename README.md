@@ -45,7 +45,7 @@ Here is the step-by-step guide to build a development version of Cytoscape.
     - Now you can see a new directory named **cytoscape**:
 
 ```
-cytoscape
+cytoscape     <= parent level directory
 ├── README.md
 ├── cy.sh
 └── pom.xml
@@ -59,10 +59,10 @@ cytoscape
 1. Now you can see a new sub-directory (also) named **cytoscape**, which contains the subprojects:
 
 ```
-cytoscape
+cytoscape     <= parent level directory
 ├── README.md
 ├── cy.sh
-├── cytoscape
+├── cytoscape     <= sub-project directory
 │   ├── README.md
 │   ├── api
 │   ├── app-developer
