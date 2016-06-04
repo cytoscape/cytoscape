@@ -56,13 +56,13 @@ cytoscape     <= parent level directory
 1. Execute the following command: 
     - Create new folder under current working directory: ```./cy.sh init```
     - (Optional) Specify target directory: ```./cy.sh init /path/to/new/cytoscape/source/code```
-1. Now you can see a new sub-directory (also) named **cytoscape**, which contains the subprojects:
+1. Now you can see a new subdirectory (also) named **cytoscape**, which contains the subprojects:
 
 ```
 cytoscape     <= parent level directory
 ├── README.md
 ├── cy.sh
-├── cytoscape     <= sub-project sub-directory
+├── cytoscape     <= subproject directory
 │   ├── README.md
 │   ├── api
 │   ├── app-developer
@@ -76,7 +76,7 @@ cytoscape     <= parent level directory
 ```
 
 ### Building Cytoscape
-1. Go into the **cytoscape** sub-directory ```cd ./cytoscape```
+1. Go into the **cytoscape** subproject directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install```
     - Option: use ```mvn -fae clean install``` (... see below)
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes. 
@@ -90,13 +90,13 @@ do fail during the first few compiles, but eventually pass.) When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
 ### Choosing a Branch
-If your Cytoscape project has Git branches, you can switch branches easily with **cy** script.  Simply go to the main project *cytoscape* directory and type:
+If your Cytoscape project has Git branches, you can switch branches easily with **cy** script.  Simply go to the parent level  *cytoscape* directory and type:
 
 ```
 cy switch BRANCH_NAME
 ```
 
-where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape sub-projects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
+where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape subprojects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
 
 ### Managing Nested Git Repos with a GUI
 The Cytoscape project is organized as a nested set of Git repositories. This provides for modularity and flexibility, but at the cost of greater complexity. The script at the parent level repository helps to manage ```git pull``` commands, but beyond that it can be challenging to manage the state of each repository. Fortunately, there are GUIs that can help:
@@ -109,7 +109,7 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 ___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
 
 ### Checking out core apps
-Assume you are in the top level directory of Cytoscape project. ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory
+Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory
 
 ### Updating core apps
 When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow. Before releasing, the version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
