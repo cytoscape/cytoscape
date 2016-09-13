@@ -209,8 +209,19 @@ git merge branch_name
 (substitute the branch you're merging into master for branch_name)
 This should merge cleanly - if there are any conflicts you will need to resolve them. When you are satisfied, you will need to push all the changes - once again, you can use cy.sh from the build root:
 ```
-./cy.sh switch master
+./cy.sh push
 ```
+
+### Tagging a Release
+After merging a release into the master branch, it should be tagged with the release version number. To do this, we start in the Cytoscape build root with master checked out in all projects and execute the following commands:
+```
+git tag x.y.z
+git push origin x.y.z
+```
+(substitute the version number for x.y.z)
+
+This will tag the repository and push it to GitHub. Then, repeat this for all the sub-repositories (api, app-developer, gui-distribution, impl, parent, and support).
+
 ### Finalizing a Release
 There are a few other steps that need to be completed when building a release. These should be done at the very end of the process (i.e. right before sending out the announcement and updating the website/release notes).
 
