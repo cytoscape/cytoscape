@@ -159,7 +159,7 @@ Though this will update most instances of the version number, it doesn't get the
 * cytoscape.sh (in gui-distribution/assembly/src/bin)
 * cytoscape.bat (in gui-distribution/assembly/src/bin)
 * parent/pom.xml (look for taglets)
-* pom.xml in app-developer, gui-distribution, impl, support (look for <properties> tag)
+* pom.xml in app-developer, gui-distribution, impl, support (look for properties tag)
 * pom.xml in src/main/resources/archetype-resources/pom.xml (for each archetype subdirectory in support/archetypes)
 * pom.xml in event-impl/it, model-impl/it, session-impl/impl, session-impl/integration-test, viewmodel-impl-parent/it, vizmap-impl-parent/it, work-swing-impl-parent/it
 
