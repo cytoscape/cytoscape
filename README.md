@@ -61,6 +61,13 @@ Here is the step-by-step guide to build a development version of Cytoscape.
  export JAVA_HOME=/path/to/java
  ```
  On Mac, you can use```$(/usr/libexec/java_home -v 1.8)``` instead of the actual path to automatically specify the latest 1.8 JVM installed.
+ 
+1. If you are using Git for the first time, you need to set your name and e-mail address. To do this, use the following commands:
+ ```
+ git config user.name "Your Name"
+ git config user.email yourname@yourname.com
+ ```
+ Substitute your actual name and e-mail address in the commands.
 
 1. Generate an ssh key and set it up on GitHub. To do this, you will first need to be added to the Cytoscape GitHub project by one of the core developers. Then, click the arrow in the top-right hand corner of any GitHub page and choose "Settings". Click "SSH and GPG keys", then follow the instructions on the linked guide to generate an SSH key on your particular operating system. Once you have generated an SSH key, return to the original "SSH and GPG keys" page and add the generated key using "New SSH key". 
 
