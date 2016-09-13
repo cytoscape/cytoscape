@@ -240,11 +240,13 @@ When a core app update is ready to be pushed to the App Store and the developmen
 
 1. Deploy to Nexus using ```mvn deploy``` - note that you will need to have our repository properly configured in ~/.m2/settings.xml to do this.
 1. Update the gui-distribution/assembly/pom.xml file in Cytoscape core to depend on the new version of the core app.
-1. Update the core apps meta-app (located [here](https://github.com/cytoscape/core-apps-meta), or in apps/core-apps-meta if you used the cy.sh script to check out all core apps) to reflect the newest version of the core app. The core apps meta-app doesn't need to be re-released to the App Store between releases (unless a new core app is being added, in which case a new release should be submitted as if it were any other core app).
 1. Submit the new core app to the App Store using the web-based submission process at apps.cytoscape.org.
 1. Update the core app's version for future development - i.e. if the last release was 3.3.1, update it to 3.3.2-SNAPSHOT.
 
-Note: If a core app update depends on an unreleased version of the Cytoscape API, it cannot be released to the App Store. In that case, to add it to the development version you will want to follow the same steps as above, but skip the steps relating to App Store submission and updating the core apps meta-app. You will leave the core app's version as a -SNAPSHOT release, and use that when updating the gui-distribution/assembly/pom.xml. When preparing to release Cytoscape, at that time you would remove the -SNAPSHOT and update the API dependencies to release versions (though the app shouldn't be submitted to the App Store until you are ready to release).
+Note: If a core app update depends on an unreleased version of the Cytoscape API, it cannot be released to the App Store. In that case, to add it to the development version you will want to follow the same steps as above, but skip the steps relating to App Store submission. You will leave the core app's version as a -SNAPSHOT release, and use that when updating the gui-distribution/assembly/pom.xml. When preparing to release Cytoscape, at that time you would remove the -SNAPSHOT and update the API dependencies to release versions (though the app shouldn't be submitted to the App Store until you are ready to release).
+
+### The core apps meta-app
+The core apps meta-app is a special core app - it contains no code itself besides a CyActivator, but depends on all the other core apps. The purpose of this is to allow us to add new core apps to each Cytoscape installation in between releases. This app should be updated whenever a core app is added to add the new app dependency to the Cytoscape-App-Dependencies section of the pom.xml. It can also be updated when a release is made (or even between releases) to update all the dependencies to the latest versions, but it is unclear that this is necessary as Cytoscape app dependencies refer to that version or greater.
 
 ## Notes for Windows Developers
 Windows implementations of Git and other tools differ slightly from the above.
