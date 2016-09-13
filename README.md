@@ -112,6 +112,21 @@ The option `-fae` is short for "fail at end", which allows the build to continue
 do fail during the first few compiles, but eventually pass.) When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
+### Creating a new branch
+At some time, it may be necessary to create a new branch for a Cytoscape release. This is the case if it is necessary to carry on multiple threads of development simultaneously (i.e. 3.5 is in a release candidate stage, but we want to continue development on features destined for 3.6.)  
+
+In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. Change to the root directory of the checked-out code, and run the following command to create a new branch and push this to GitHub (make sure all changes are committed beforehand). 
+```
+git checkout -b 3.x.x
+```
+Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended).
+
+Then, repeat for each individual sub-repository (those being api, app-developer, gui-distribution, impl, parent, and support). Then, run the following in the root directory and each subdirectory to push the new branch to GitHub:
+```
+git push
+```
+Your new branch has been created and pushed.
+
 ### Choosing a Branch
 If your Cytoscape project has Git branches, you can switch branches easily with **cy** script.  Simply go to the parent level  *cytoscape* directory and type:
 ```
@@ -126,7 +141,7 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 * SourceTree: https://www.sourcetreeapp.com/
 
 ### Building a Release
-There are several steps involved in building a release.
+There are several steps involved in building a release. Some of these can be automated using the [cytoscape-scripts](https://github.com/cytoscape/cytoscape-scripts) - however, these may not completely replicate the steps below and have not been updated in a while. As such, it is recommended to do the following steps manually.
 
 ### Updating version numbers
 When preparing to make a new release (or start a new development branch), it is necessary to update the version numbers in Cytoscape to reflect this release. This is typically done at the release-candidate state, and also when updating the development branch for the next development version. 
@@ -150,20 +165,10 @@ Though this will update most instances of the version number, it doesn't get the
 
 Push and commit all changes to GitHub when you are done updating the version numbers.
 
-### Creating a new branch
-At some time, it may be necessary to create a new branch for a Cytoscape release. This is the case if it is necessary to carry on multiple threads of development simultaneously (i.e. 3.5 is in a release candidate stage, but we want to continue development on features destined for 3.6.)  
+### Releasing unreleased updates to core apps
+Typically, updates to core apps will be released separately from the Cytoscape core development cycle, and the development branch will be updated to use any new updates as they are released. However, if a core app depends on an unreleased API in the development version of Cytoscape, this won't work. In that case, we have to release the unreleased core app when Cytoscape is being released. 
 
-In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. Change to the root directory of the checked-out code, and run the following command to create a new branch and push this to GitHub (make sure all changes are committed beforehand). 
-```
-git checkout -b 3.x.x
-```
-Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended).
-
-Then, repeat for each individual sub-repository (those being api, app-developer, gui-distribution, impl, parent, and support). Then, run the following in the root directory and each subdirectory to push the new branch to GitHub:
-```
-git push
-```
-Your new branch has been created and pushed.
+After updating the version numbers to a release version (at the release candidate stage), check the gui-distribution/assembly/pom.xml to see if there are any -SNAPSHOT dependencies in core apps. If so, you will want to update these core apps to use non-SNAPSHOT API dependencies and a non-SNAPSHOT version number. Then, commit/push your changes and do an ```mvn deploy``` to deploy the new version. Finally, update the gui-distribution/assembly/pom.xml core app dependency to the new (non-SNAPSHOT) version number.  The updated app should be released to the App Store right before Cytoscape is released (take care to submit the same version as was deployed to Nexus - rebuilding will result in a non-matching checksum).
 
 ### Deploying to Nexus
 When we are ready to release, we need to deploy artifacts for each bundle to Nexus. To build and deploy all artifacts, run the following command from the Cytoscape top-level directory:
@@ -210,15 +215,18 @@ http://chianti.ucsd.edu/cytoscape-news/news.html
 ___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
 
 ### Checking out core apps
-Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory
+Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory.
 
 ### Updating core apps
 When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow. Before releasing, the version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
 
 1. Deploy to Nexus using ```mvn deploy``` - note that you will need to have our repository properly configured in ~/.m2/settings.xml to do this.
 1. Update the gui-distribution/assembly/pom.xml file in Cytoscape core to depend on the new version of the core app.
+1. Update the core apps meta-app (located [here](https://github.com/cytoscape/core-apps-meta), or in apps/core-apps-meta if you used the cy.sh script to check out all core apps) to reflect the newest version of the core app. The core apps meta-app doesn't need to be re-released to the App Store between releases (unless a new core app is being added, in which case a new release should be submitted as if it were any other core app).
 1. Submit the new core app to the App Store using the web-based submission process at apps.cytoscape.org.
 1. Update the core app's version for future development - i.e. if the last release was 3.3.1, update it to 3.3.2-SNAPSHOT.
+
+Note: If a core app update depends on an unreleased version of the Cytoscape API, it cannot be released to the App Store. In that case, to add it to the development version you will want to follow the same steps as above, but skip the steps relating to App Store submission and updating the core apps meta-app. You will leave the core app's version as a -SNAPSHOT release, and use that when updating the gui-distribution/assembly/pom.xml. When preparing to release Cytoscape, at that time you would remove the -SNAPSHOT and update the API dependencies to release versions (though the app shouldn't be submitted to the App Store until you are ready to release).
 
 ## Notes for Windows Developers
 Windows implementations of Git and other tools differ slightly from the above.
