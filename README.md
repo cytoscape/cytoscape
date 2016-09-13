@@ -44,26 +44,22 @@ Here is the step-by-step guide to build a development version of Cytoscape.
 
 1. Add JDK, Maven, and Git to your system PATH if necessary. On some platforms, this is done automatically on installation - try running mvn, git, or java at a command line to check this. 
  
- If you need to add tools to the PATH, the steps you should follow vary by operating system. On Windows, this can be done in the Environment Variables dialog - open the file browser, right click on "Computer" or "This PC", select "Advanced system settings", then click "Environment Variables" - you should be able to edit the the PATH by selecting the PATh environment variable and clicking Edit. On Mac or Linux, you would need to edit the .profile or .bashrc file in your home directory to set environment variables, depending on the type of shell you are using. It may be helpful to add the following to .profile and set the PATH in .bashrc so that all shells will read the same values:
+ If you need to add tools to the PATH, the steps you should follow vary by operating system. On Windows, this can be done in the Environment Variables dialog - open the file browser, right click on "Computer" or "This PC", select "Advanced system settings", then click "Environment Variables" - you should be able to edit the the PATH by selecting the PATH environment variable and clicking Edit. On Mac or Linux, you would need to edit the .profile or .bashrc file in your home directory to set environment variables, depending on the type of shell you are using. It may be helpful to add the following to .profile and set the PATH in .bashrc so that all shells will read the same values:
  ```
  if [ -f ~/.bashrc ]; then
    source ~/.bashrc
  fi
  ```
-
  Then, in .bashrc, add something like the following:
-
  ```
  export PATH=/path/to/java/bin:/path/to/maven/bin:/path/to/git/bin:$PATH
  ```
  Use the directories where binaries are located, as this wiill ensure that the command line knows where to find them.
  
 1. Set the JAVA_HOME environment variable to the JDK 1.8 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 1.8 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
-
  ```
  export JAVA_HOME=/path/to/java
  ```
- 
  On Mac, you can use```$(/usr/libexec/java_home -v 1.8)``` instead of the actual path to automatically specify the latest 1.8 JVM installed.
 
 1. Generate an ssh key and set it up on GitHub. To do this, you will first need to be added to the Cytoscape GitHub project by one of the core developers. Then, click the arrow in the top-right hand corner of any GitHub page and choose "Settings". Click "SSH and GPG keys", then follow the instructions on the linked guide to generate an SSH key on your particular operating system. Once you have generated an SSH key, return to the original "SSH and GPG keys" page and add the generated key using "New SSH key". 
@@ -118,11 +114,9 @@ is done, you can find the application in `gui-distribution/assembly/target/cytos
 
 ### Choosing a Branch
 If your Cytoscape project has Git branches, you can switch branches easily with **cy** script.  Simply go to the parent level  *cytoscape* directory and type:
-
 ```
 cy switch BRANCH_NAME
 ```
-
 where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape subprojects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
 
 ### Managing Nested Git Repos with a GUI
@@ -131,6 +125,86 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 * Eclipse: [Setup instructions](../../wiki/Managing-Cytoscape-Git-Repos-in-Eclipse)
 * SourceTree: https://www.sourcetreeapp.com/
 
+### Building a Release
+There are several steps involved in building a release.
+
+### Updating version numbers
+When preparing to make a new release (or start a new development branch), it is necessary to update the version numbers in Cytoscape to reflect this release. This is typically done at the release-candidate state, and also when updating the development branch for the next development version. 
+
+As the version number is repeated many times throughout the Cytoscape build configuration, it is easiest to make use of the Maven versions plugin to help make this change. To do this, change to the root directory in the Cytoscape directory structure. Then, run the following command:
+```
+mvn versions:set -DnewVersion=3.x.x
+```
+Substitute the desired version for "3.x.x" - if you are starting a new development branch, you would use a version number ending in -SNAPSHOT (i.e. 3.6.0-SNAPSHOT).
+
+Then, change to the "parent" directory and repeat this command. When you are satisfied with the updated version number, run ```mvn versions:commit``` in both directories (run ```mvn versions:revert``` to undo the changes).
+
+Though this will update most instances of the version number, it doesn't get them all. You will need to manually update the version number in the following places:
+
+* cytoscape.sh (in gui-distribution/assembly/src/bin)
+* cytoscape.bat (in gui-distribution/assembly/src/bin)
+* parent/pom.xml (look for taglets)
+* pom.xml in app-developer, gui-distribution, impl, support (look for <properties> tag)
+* pom.xml in src/main/resources/archetype-resources/pom.xml (for each archetype subdirectory in support/archetypes)
+* pom.xml in event-impl/it, model-impl/it, session-impl/impl, session-impl/integration-test, viewmodel-impl-parent/it, vizmap-impl-parent/it, work-swing-impl-parent/it
+
+Push and commit all changes to GitHub when you are done updating the version numbers.
+
+### Creating a new branch
+At some time, it may be necessary to create a new branch for a Cytoscape release. This is the case if it is necessary to carry on multiple threads of development simultaneously (i.e. 3.5 is in a release candidate stage, but we want to continue development on features destined for 3.6.)  
+
+In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. Change to the root directory of the checked-out code, and run the following command to create a new branch and push this to GitHub (make sure all changes are committed beforehand). 
+```
+git checkout -b 3.x.x
+```
+Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended).
+
+Then, repeat for each individual sub-repository (those being api, app-developer, gui-distribution, impl, parent, and support). Then, run the following in the root directory and each subdirectory to push the new branch to GitHub:
+```
+git push
+```
+Your new branch has been created and pushed.
+
+### Deploying to Nexus
+When we are ready to release, we need to deploy artifacts for each bundle to Nexus. To build and deploy all artifacts, run the following command from the Cytoscape top-level directory:
+```
+mvn clean deploy
+```
+Note that you will need to configure the Nexus server in ~/.m2/settings.xml before doing this. Deployign to Nexus will always rebuild Cytoscape, so each deployment will have a different timestamp/SHA hash than the last deployment (even if nothing has changed).
+
+### Building Installers
+To build installers, we use a proprietary tool called install4J. This can be downloaded [here](https://www.ej-technologies.com/download/install4j/files) - the license key should be available to core team members. After installing install4j, you may need to update the path in the build configuration, which is set in the install4j.executable property in gui-distribution/packaging/pom.xml. The default value will work with the default install path on a Mac - this will need to be changed if you are building on a Windows/Linux system or install to a non-default path on Mac (it is advised not to commit changes to this property, as it is intended to be set locally).
+
+To build installers for the most recently-built code, run the following command from the gui-distribution/packaging directory:
+```
+mvn install
+```
+(Mac only) After that finishes, you will need to run the following command to sign the Mac DMG. This requires the Mac App Store certificate 'Developer ID Application' to be installed:
+```
+./sign-dmg.sh 'Developer ID Application'
+```
+After this is done, you would upload the built installers (in the target/install4j subdirectory of packaging, with the exception of the signed DMG which will be in target/install4j/signed) to the desired host (this would generally be chianti). If you are building a full release, also upload the swing-app-api JAR (in api/swing-app/api/target under the Cytoscape build root) and the API Javadocs (in app-developer/target/API) in the same directory.
+
+### Merging a new release into the master branch
+When a new release is cut, the release branch (or develop branch if that is being used) needs to be merged into the master branch. To do this, first make sure all your changes are checked in. Then, switch to the master branch. You can use the cy.sh script for this - to do that, run from the Cytoscape build root:
+```
+./cy.sh switch master
+```
+Then, in the root directory and each component subdirectory (api, app-developer, gui-distribution, impl, parent, and support), run the following command:
+```
+git merge branch_name
+```
+(substitute the branch you're merging into master for branch_name)
+This should merge cleanly - if there are any conflicts you will need to resolve them. When you are satisfied, you will need to push all the changes - once again, you can use cy.sh from the build root:
+```
+./cy.sh switch master
+```
+### Finalizing a Release
+There are a few other steps that need to be completed when building a release. These should be done at the very end of the process (i.e. right before sending out the announcement and updating the website/release notes).
+
+1. Update the version number in news.html, and add the announcement for a new release. This file is located at 
+http://chianti.ucsd.edu/cytoscape-news/news.html
+1. Tag the manual to correspond with the new release. The manual is now a GitHub repository (located [here](https://github.com/cytoscape/cytoscape-manual)), and tagging it will create a new version of the document on ReadTheDocs. This is referenced by the Cytoscape application (using its internal version to determine the URL - when tagging, the version number should not include any prefix or suffix and should always have three digits and two decimal places (so 3.6 should be "3.6.0").
 
 ## New in 3.3.0: Core Apps
 ___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
