@@ -262,11 +262,13 @@ function switch-apps {
 }
 
 function init-all {
+  cur_dir=`pwd`
+
   init
   cd ./cytoscape
   mvn clean install || { echo Failed to build Cytoscape; }
-  cd -
 
+  cd ${cur_dir}
   apps
   cd ./apps
   build-apps
