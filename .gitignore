@@ -16,3 +16,7 @@ support/
 *.jar
 *.war
 *.ear
+
+# Cytoscape directories created by this script
+cytoscape/
+apps/

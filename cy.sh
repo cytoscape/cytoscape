@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(#) cy version 2.0.0 9/15/2015
+# @(#) cy version 3.0.0 11/14/2016
 #
 #  USAGE:
 #    init
@@ -9,7 +9,7 @@
 #   Cytoscape 3 repository management utility.
 #   This script is only for core developers.
 #
-# Reqiirments:
+# Requirments:
 #   - git
 #
 # By Keiichiro Ono (kono at ucsd edu)
@@ -23,7 +23,7 @@ CMDNAME=$(basename $0)
 ERROR_MESSAGE="Usage: $CMDNAME [-h] [action]"
 
 # Help
-HELP='Cytoscape repository management tool'
+HELP='Cytoscape build helper script'
 
 # Git base URL
 BASE_URL='git@github.com:cytoscape/cytoscape-'
@@ -35,7 +35,9 @@ APP_URL='git@github.com:cytoscape/'
 REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 
 # List of Core Apps
-CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid json idmapper network-analyzer network-merge opencl-cycl opencl-layout psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
+CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid \
+json idmapper network-analyzer network-merge opencl-cycl opencl-layout \
+psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
 
 #######################################
 # Handling command-line arguments     #
@@ -219,6 +221,48 @@ function apps {
   cd ..
 }
 
+function update-apps {
+  cd apps
+
+  for app in "${CORE_APPS[@]}"; do
+    cd $app
+    echo "- Pulling changes for $app"
+    git pull || { echo Could not pull changes: $REPO_URL; exit 1; }
+    cd ..
+  done
+  cd ..
+}
+
+function build-apps {
+  cd apps
+  echo "Core apps: $CORE_APPS"
+
+  for app in "${CORE_APPS[@]}"; do
+    cd $app
+    echo "- Building $app"
+    mvn clean install || { echo Could not pull changes: $REPO_URL; exit 1; }
+    cd ..
+  done
+  cd ..
+}
+
+function switch-apps {
+  TARGET="${TARGET_DIR}"
+  if [[ -z $TARGET ]]; then
+    echo "Branch name is required: cy switch-apps BRANCH_NAME" 1>&2
+    exit 1
+  fi
+
+  cd apps
+  for app in "${CORE_APPS[@]}"; do
+    cd $app
+    echo "- Switching to ${TARGET}: $app"
+    git checkout $TARGET || { echo Could not checkout branch $TARGET; }
+    cd ..
+  done
+  cd ..
+}
+
 ###############################################################################
 # Main workflow
 ###############################################################################
@@ -234,6 +278,9 @@ case $COMMAND in
   switch )  switch ;;
   status )  status ;;
   apps )    apps ;;
+  pull-apps )    update-apps ;;
+  build-apps )    build-apps ;;
+  switch-apps )  switch-apps ;;
 
   * )      echo "Invalid command $COMMAND: $ERROR_MESSAGE"
           exit 1;;
