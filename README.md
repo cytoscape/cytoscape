@@ -1,39 +1,84 @@
-# Cytoscape Core Distribution Building Guide
+# Cytoscape Core: Building Guide
+
+![](https://avatars1.githubusercontent.com/u/956141?v=3&s=200)
+
+#### Status:
+- 11/14/2016 - Updated for Cytoscape 3.5 release
 
 ## Introduction
-Cytoscape core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building entire Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
+Cytoscape is a fairly complex application and its core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
 
-If you are interested in building Cytoscape apps, you don't need to build Cytoscape from source.  You can follow the guide here:
+### Target Audience
+This document is a guide for developers who want to build the entire Cytoscape core distribution from scratch.  If you are interested in building Cytoscape apps, you don't need to build Cytoscape from source.  You can follow the guide here to learn more about Cytoscape app development:
 
 * [Cytoscape Developer Documents](http://www.cytoscape.org/documentation_developers.html)
 
-## Getting Started with Cytoscape Source Code
-
-### Requirements
-
+## Requirements
 You need the following tools to build latest development version of Cytoscape 3:
 
+* Computer with Windows, Mac, or Linux
 * [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or later
-* [Maven 3](https://maven.apache.org/) (Tested with 3.3.3)
+* [Maven 3](https://maven.apache.org/) (Tested with 3.3.x)
 * [Git](https://git-scm.com/)
 * [_cy.sh_](https://github.com/cytoscape/cytoscape-scripts) - Utility script for building Cytoscape core distribution.
 
 While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
 
-### Cytoscape 3 Core Main and Sub Projects
-Cytoscape source code is maintained in several GitHub repositories, and is organized into a main project and several sub-projects:
+## Cytoscape 3 Core Directory Structure
+Cytoscape source code is maintained in several GitHub repositories, and is organized into a main project and several sub-projects.
 
-* [parent](https://github.com/cytoscape/cytoscape-parent)
-* [api](https://github.com/cytoscape/cytoscape-api)
-* [impl](https://github.com/cytoscape/cytoscape-impl)
-* [support](https://github.com/cytoscape/cytoscape-support)
-* [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution)
-* [app-developer](https://github.com/cytoscape/cytoscape-app-developers)
+### The Core
+```
+── cytoscape
+   ├── README.md
+   ├── api
+   ├── app-developer
+   ├── cy.sh
+   ├── gui-distribution
+   ├── impl
+   ├── parent
+   ├── pom.xml
+   └── support
+```
+
+* [parent](https://github.com/cytoscape/cytoscape-parent) - Contains several shared variables for building Cytoscape sub projects
+* [api](https://github.com/cytoscape/cytoscape-api) - Public API bundles
+* [impl](https://github.com/cytoscape/cytoscape-impl) - Implementation bundles
+* [support](https://github.com/cytoscape/cytoscape-support) - Misc. bundles for building core
+* [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution) - Actual distribution created from core projects and core apps
+* [app-developer](https://github.com/cytoscape/cytoscape-app-developers) - API JAR file for app developers
 
 Instead of cloning each sub-project's repository one-by-one, you can use the utility script in the Cytoscape repository to initialize your workspace all at once (see below).
 
+### New in 3.3.0: Core Apps
+___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
+
+**Note that each core app has its own repository and there is no parent-child relationship between Cytoscape Core and the Apps.  This means, in the core building process, local core apps will not be used in the process.**
+
+As of Cytoscape 3.5.0 (November 2016), Cytoscape core distribution comes with the following core apps:
+
+```
+── apps
+   ├── biopax
+   ├── command-dialog
+   ├── core-apps-meta
+   ├── cyREST
+   ├── datasource-biogrid
+   ├── idmapper
+   ├── json
+   ├── network-analyzer
+   ├── network-merge
+   ├── opencl-cycl
+   ├── opencl-layout
+   ├── psi-mi
+   ├── sbml
+   ├── webservice-biomart-client
+   ├── webservice-psicquic-client
+   └── welcome
+```
+
 ### Optional Projects
-This repository contains sample code for app developers and it will not be included in the core distribution.  
+This repository contains sample code for app developers and it will not be included in the core distribution.  **You don't have to build this repository if you just want to build the Cytoscape Core distribution.**
 
 * [samples](https://github.com/cytoscape/cytoscape-samples)
 
@@ -42,7 +87,14 @@ This repository contains sample code for app developers and it will not be inclu
 ## Building Development Version of Cytoscape 3
 Here is the step-by-step guide to build a development version of Cytoscape.
 
-### Clone the Main Project
+### Branch Management
+#### Cytoscape Core
+For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.
+
+#### Core Apps branch management
+Since core apps have their own release cycles, they have different branching scheme.  Usually, features are developed in feature branches, and there is only one common branch called **master**.  Head of the master branch is always the latest development version of the core app.    
+
+### Step 1: Clone the Main Project
 1. Install required tools: JDK, Maven, and Git. On some systems, these may be preinstalled - you can use those versions if they are relatively recent, though we would recommend Oracle's JDK over OpenJDK.
 
 1. Add JDK, Maven, and Git to your system PATH if necessary. On some platforms, this is done automatically on installation - try running mvn, git, or java at a command line to check this.
@@ -64,9 +116,11 @@ Here is the step-by-step guide to build a development version of Cytoscape.
  Use the directories where binaries are located, as this wiill ensure that the command line knows where to find them.
 
 1. Set the JAVA_HOME environment variable to the JDK 1.8 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 1.8 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
+
  ```
  export JAVA_HOME=/path/to/java
  ```
+
  On Mac, you can use```$(/usr/libexec/java_home -v 1.8)``` instead of the actual path to automatically specify the latest 1.8 JVM installed.
 
 1. If you are using Git for the first time, you need to set your name and e-mail address. To do this, use the following commands:
@@ -82,24 +136,24 @@ Here is the step-by-step guide to build a development version of Cytoscape.
     - Now you can see a new directory named **cytoscape**:
 
 ```
-cytoscape     <= parent level directory
+cytoscape     <-- parent level directory
 ├── README.md
 ├── cy.sh
 └── pom.xml
 ```
 
-### Clone the SubProjects
-1. CD to the cloned main project directory: ```cd ./cytoscape```
-1. Execute the following command:
+### Step 2: Clone the Sub Projects
+1. _cd_ to the cloned main project directory: ```cd ./cytoscape```
+1. Execute of of the following command:
     - Create new folder under current working directory: ```./cy.sh init```
     - (Optional) Specify target directory: ```./cy.sh init /path/to/new/cytoscape/source/code```
-1. Now you can see a new subdirectory (also) named **cytoscape**, which contains the subprojects:
+1. Now you can see a new subdirectory (also) named **cytoscape**, which contains the sub projects:
 
 ```
-cytoscape     <= parent level directory
+cytoscape     <-- parent level directory
 ├── README.md
 ├── cy.sh
-├── cytoscape     <= subproject directory
+├── cytoscape     <-- subproject directory
 │   ├── README.md
 │   ├── api
 │   ├── app-developer
@@ -112,11 +166,11 @@ cytoscape     <= parent level directory
 └── pom.xml
 ```
 
-### Building Cytoscape
+### Step 3: Building Cytoscape
 1. Go into the **cytoscape** subproject directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install```
     - Option: use ```mvn -fae clean install``` (... see below)
-1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remove server.
+1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
 1. ```cd gui-distribution/assembly/target/cytoscape```
 1. Run development version of Cytoscape:
    - Mac/Linux: ```./cytoscape.sh```
@@ -126,20 +180,41 @@ The option `-fae` is short for "fail at end", which allows the build to continue
 do fail during the first few compiles, but eventually pass.) When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
 
-## New in 3.3.0: Core Apps
-___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
+----
 
-### Checking out core apps
-Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory. To test changes, simply install the JAR using the App Manager or copy to the ~/CytoscapeConfiguration/3/apps/installed directory.
+## Building Core Apps
+All of the core apps are maintained in their own repository and if you want to try the latest version of the core app, you need to build them separately.
 
-### Building Core Apps
+### Step 1: Checking out core apps
+Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory.  All of the core apps are hosted under this org account:
+
+* [Cytoscape Consortium GitHub Repository](https://github.com/cytoscape)
+
+### Step 2: Building Core Apps
 All of core apps are independent to each other and there is no dependency among those.  To build the apps, you can just _cd_ to the app's directory and run:
 
 ```
 mvn clean install
 ```
 
-to build the latest version.
+to build the latest version.  You can also use the following command from top-level directory to build all core apps:
+
+```
+./cy.sh build-apps
+```
+
+This command simply runs ```mvn clean install``` for each core app directory.
+
+### Step 3: Install the new build
+To test changes, simply install the JAR using the App Manager or copy to the ```~/CytoscapeConfiguration/3/apps/installed``` directory.
+
+----
+
+# Adding a new Core App
+If you need to add an new core apps, you need to follow these steps:
+
+### Update directory structure
+All of the Cytoscape core apps should respect the
 
 ----
 ## Misc. Instruction for core developers
@@ -182,6 +257,7 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 ----
 
 # Building a New Release
+This section is for core developers only.
 
 ## Introduction
 There are several steps involved in building a release. Some of these can be automated using the [cytoscape-scripts](https://github.com/cytoscape/cytoscape-scripts) - however, these may not completely replicate the steps below and have not been updated in a while. As such, it is recommended to do the following steps manually.

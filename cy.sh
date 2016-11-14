@@ -68,7 +68,6 @@ fi
 ###############################################################################
 # Functrions
 ###############################################################################
-
 function reset {
   echo "This command resets all of your local changes!"
   confirm
@@ -125,7 +124,6 @@ function switch {
     git checkout $TARGET || { echo Could not checkout branch $TARGET; }
     popd
   done
-
 }
 
 # Not finished yet.
@@ -263,6 +261,17 @@ function switch-apps {
   cd ..
 }
 
+function init-all {
+  init
+  apps
+  cd ./cytoscape
+  mvn clean install || { echo Failed to build Cytoscape; }
+  cd -
+  cd ./apps
+  build-apps
+  cd -
+}
+
 ###############################################################################
 # Main workflow
 ###############################################################################
@@ -272,6 +281,7 @@ START_DIR=$(pwd)
 
 case $COMMAND in
   init )    init ;;
+  init-all )    init-all ;;
   reset )    reset ;;
   push )    push ;;
   pull )    pull ;;
