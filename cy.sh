@@ -263,10 +263,11 @@ function switch-apps {
 
 function init-all {
   init
-  apps
   cd ./cytoscape
   mvn clean install || { echo Failed to build Cytoscape; }
   cd -
+
+  apps
   cd ./apps
   build-apps
   cd -

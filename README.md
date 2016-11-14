@@ -142,6 +142,14 @@ cytoscape     <-- parent level directory
 └── pom.xml
 ```
 
+#### Shortcut
+If you want to skip the following steps, you can use this command to clone and build all core projects and core apps:
+
+```
+./cy.sh init-all
+```
+Once finished, you can skip to Step 4.
+
 ### Step 2: Clone the Sub Projects
 1. _cd_ to the cloned main project directory: ```cd ./cytoscape```
 1. Execute of of the following command:
@@ -171,6 +179,9 @@ cytoscape     <-- parent level directory
 1. Run Maven: ```mvn clean install```
     - Option: use ```mvn -fae clean install``` (... see below)
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
+
+### Step 4: Run the new build
+Now you are ready to run the new
 1. ```cd gui-distribution/assembly/target/cytoscape```
 1. Run development version of Cytoscape:
    - Mac/Linux: ```./cytoscape.sh```
@@ -179,6 +190,8 @@ cytoscape     <-- parent level directory
 The option `-fae` is short for "fail at end", which allows the build to continue even if unit tests fail. (Current unit tests
 do fail during the first few compiles, but eventually pass.) When Maven
 is done, you can find the application in `gui-distribution/assembly/target/cytoscape`.
+
+Note that if you want to test the new build with a clean slate, we recommend to remove the entire ```~/CytoscapeConfiguration``` directory.
 
 ----
 
@@ -213,8 +226,10 @@ To test changes, simply install the JAR using the App Manager or copy to the ```
 # Adding a new Core App
 If you need to add an new core apps, you need to follow these steps:
 
-### Update directory structure
-All of the Cytoscape core apps should respect the
+## Update directory structure
+All of the Cytoscape core apps should respect the following conventions for consistency.
+
+1.
 
 ----
 ## Misc. Instruction for core developers
