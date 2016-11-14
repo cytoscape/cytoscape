@@ -226,10 +226,81 @@ To test changes, simply install the JAR using the App Manager or copy to the ```
 # Adding a new Core App
 If you need to add an new core apps, you need to follow these steps:
 
-## Update directory structure
+## Step 1: Update directory structure
 All of the Cytoscape core apps should respect the following conventions for consistency.
 
-1.
+1. **Organize the directory**
+  - The top level directory should contain only the minimal set of files.
+  ```
+.
+├── .gitignore
+├── README.md
+├── pom.xml
+└── src
+          ├── main
+          └── test
+  ```
+  - Create proper _.gitignore_ file
+  - Add _README.md_ to briefly describe the app
+  - Make sure _src_ contains only main and test sub directories
+1. **Use standard group and package name**
+  - _org.cytoscape_ should be used as the group ID
+  - Package name also needs to be updated to follow the standard, like: ```org.cytoscape.YOUR_APP_NAME```
+
+## Step 2: Update pom.xml
+1. **Use standard name and ID**
+    ```
+    <groupId>org.cytoscape</groupId>
+	  <artifactId>my-app</artifactId>
+	  <version>3.5.0</version>
+	  <packaging>bundle</packaging>
+	  <name>My APP</name>
+    ```
+1. **Add all required plugin instructions**
+  - The core app should work as an independent repository.  This means you should not depends on any parent pom file.
+  - All instructions, including compiler arguments and parameters for BND plugin should be provided
+  - Make sure you have proper information for the following sections:
+    - repositories
+    - distributionManagement
+    - scm
+    - build
+1. **Update version number**
+  - Use standard versioning convention.  For example, if your app is introduced for Cytoscape 3.5.0, set your app's version to 3.5.0.  **DO NOT USE _-SNAPSHOT_ SUFFIX**.
+
+## Step 3: Add proper set of unit tests
+If you don't have test suite, you should add it.  This is important to detect errors caused by future changes.
+
+## Step 4: Test the new build locally
+Once you finish all of the changes above, build it locally.  If everything looks OK, install it to Cytoscape and test the app.
+
+## Step 5: Move your repository to the Cytoscape org account
+Move your app's repository to Cytoscape org account: https://github.com/cytoscape
+
+## Step 6: Setup Jenkins CI job
+You need to setup a Jenkins job for CI.  You need an ID and password to setup a new job.
+
+* Go to http://code.cytoscape.org/jenkins/
+* Login to the server as an admin
+* Copy the job from any of the existing coreapp jobs
+* Name the job with standard prefix, e.g.,  _coreapp-Your-App-Name_
+* Update the source code repository URL
+
+## Step 7: Push your changes to the remote repository
+If Jenkins job is ready, it should start the build once you push your changes to the remote GitHub repository.  If the build result is _success_, then Jenkins automatically deploy the new JAR file to the [Nexus repository](http://code.cytoscape.org/nexus/index.html#view-repositories;public~browsestorage).
+
+## Step 8: Add your app to _assembly_ pom
+Once the new app is in Nexus repository, you can use it from the core.  Add your app as a new dependency in **cytoscape-gui-distribution/assembly/pom.xml**:
+
+* https://github.com/cytoscape/cytoscape-gui-distribution/blob/develop/assembly/pom.xml
+
+It should be a new entry under _**artifactItems**_ section.
+
+## Step 9: Build Cytoscape
+Now you can build Cytoscape.  Run the new version and make sure your app is part of the distribution.
+
+## Step 10: Bump up the app's version number
+Change the version number of your app to 3.x.x-SNAPSHOT.
+
 
 ----
 ## Misc. Instruction for core developers
