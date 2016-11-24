@@ -465,6 +465,11 @@ Windows implementations of Git and other tools differ slightly from the above.
 * You can follow the Git SSH instructions to create your SSH key, but when you start the SSH agent, use `eval $(ssh-agent)` instead of `eval 'ssh-agent' -s`.
 * When running `cy init`, if you get "flags: FATAL unable to determine getopt version" somewhere in the output, you must be sure to put `getopt` in your PATH. The default location for `getopt` is `C:\Program Files (x86)\GnuWin32\bin`.
 
+# Windows Notes
+
+The Windows command line does not execute **cy** scripts, so you must execute it from within the Git Bash window within the Git GUI. However, the Git GUI doesn't present the Git Bash menu item until you have already created a repository. To get around this, create a new repository Test, and then start Git Bash.
+
+The **cy init** script attempts to fetch repositories into the current directory. If the current directory has an element containing a blank (e.g., c:\users\My Account), **cy** will fail.
 
 ### Notes for All Developers
 * Note that the `cy init` script accepts a path as a parameter. The path specifies where Cytoscape projects should be installed. Omitting the path reverts to the current working directory.
