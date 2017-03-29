@@ -434,13 +434,11 @@ git push origin x.y.z
 This will tag the repository and push it to GitHub. Then, repeat this for all the sub-repositories (api, app-developer, gui-distribution, impl, parent, and support).
 
 ### Finalizing a Release
-There are a few other steps that need to be completed when building a release. These should be done at the very end of the process (i.e. right before sending out the announcement and updating the website/release notes).
+There are a few other steps that need to be completed when building a release. These should be done at the very end of the process (i.e., right before sending out the announcement and updating the website/release notes).
 
 1. Update the version number in news.html, and add the announcement for a new release. This file is located at
-http://chianti.ucsd.edu/cytoscape-news/news.html (in chnianti:/var/www/html/cytoscape-news/news.html).
+http://chianti.ucsd.edu/cytoscape-news/news.html (in chianti:/var/www/html/cytoscape-news/news.html).
 1. Tag the manual to correspond with the new release. The manual is now a GitHub repository (located [here](https://github.com/cytoscape/cytoscape-manual)), and tagging it will create a new version of the document on ReadTheDocs. This is referenced by the Cytoscape application (using its internal version to determine the URL) - when tagging, the version number should not include any prefix or suffix and should always have three digits and two decimal places (so 3.6 should be "3.6.0").
-1. Create the Welcome Letter, based on a previous copy.
-1. Update the cytoscape.org web site (http://github.com/cytoscape/cytoscape.github.com) to have a new version number, release notes and Welcome Letter.
 1. Copy the release to the chianti:/var/www/html/cytoscape-xxx> directory, where xxx is three digits (e.g., 3.6.0). The release should have 6 files, including the installers and API/Javadoc. For example:
 ```
 drwxr-xr-x 4 root root      4096 Mar 28 11:21 API
@@ -452,6 +450,10 @@ drwxr-xr-x 4 root root      4096 Mar 28 11:21 API
 -rw-r--r-- 1 root root 122834368 Mar 28 09:53 cytoscape-3.5.0.zip
 -rw-r--r-- 1 root root      4470 Mar 28 12:09 swing-app-api-3.5.0.jar
 ```
+1. Create the Welcome Letter, based on a previous copy.
+1. Update the [cytoscape.org web site](http://github.com/cytoscape/cytoscape.github.com) to have a new version number, release notes and Welcome Letter.
+1. Send an announcement e-mail to cytoscape-helpdesk, cytoscape-app-dev and cytoscape-announce.
+1. Tweet the announcement on the Cytoscape Twitter account.
 
 
 
