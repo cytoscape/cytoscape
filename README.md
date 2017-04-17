@@ -450,6 +450,7 @@ drwxr-xr-x 4 root root      4096 Mar 28 11:21 API
 -rw-r--r-- 1 root root 122834368 Mar 28 09:53 cytoscape-3.5.0.zip
 -rw-r--r-- 1 root root      4470 Mar 28 12:09 swing-app-api-3.5.0.jar
 ```
+1. Update the CYTOSCAPE_VERSION in the windows.bat, linux.sh and mac.sh scripts in the cytoscape-scripts repo.
 1. Create the Welcome Letter, based on a previous copy.
 1. Update the [cytoscape.org web site](http://github.com/cytoscape/cytoscape.github.com) to have a new version number, release notes and Welcome Letter.
 1. Send an announcement e-mail to cytoscape-helpdesk, cytoscape-app-dev and cytoscape-announce.
