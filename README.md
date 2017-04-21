@@ -436,6 +436,7 @@ This will tag the repository and push it to GitHub. Then, repeat this for all th
 ### Finalizing a Release
 There are a few other steps that need to be completed when building a release. These should be done at the very end of the process (i.e., right before sending out the announcement and updating the website/release notes).
 
+1. Update the version number for the help toolbar icon (in core-task-impl/src/main/java/org/cytoscape/task/internal/help/HelpTaskFactory.java)
 1. Update the version number in news.html, and add the announcement for a new release. This file is located at
 http://chianti.ucsd.edu/cytoscape-news/news.html (in chianti:/var/www/html/cytoscape-news/news.html).
 1. Tag the manual to correspond with the new release. The manual is now a GitHub repository (located [here](https://github.com/cytoscape/cytoscape-manual)), and tagging it will create a new version of the document on ReadTheDocs. This is referenced by the Cytoscape application (using its internal version to determine the URL) - when tagging, the version number should not include any prefix or suffix and should always have three digits and two decimal places (so 3.6 should be "3.6.0").
