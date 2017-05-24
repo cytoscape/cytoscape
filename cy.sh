@@ -77,7 +77,7 @@ function reset {
     pushd $REPO
     git clean -f -d
     git reset --hard
-    popd ..
+    popd
   done
 }
 
