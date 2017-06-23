@@ -193,6 +193,9 @@ is done, you can find the application in `gui-distribution/assembly/target/cytos
 
 Note that if you want to test the new build with a clean slate, we recommend to remove the entire ```~/CytoscapeConfiguration``` directory.
 
+### Step 5: Continue with Eclipse project steps
+If you are developing in Eclipse, continue to set up with [these steps](https://github.com/cytoscape/cytoscape/wiki/Managing-Cytoscape-Git-Repos-in-Eclipse).
+
 ----
 
 ## Building Core Apps
