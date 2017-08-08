@@ -50,42 +50,19 @@ Cytoscape source code is maintained in several GitHub repositories, and is organ
 
 Instead of cloning each sub-project's repository one-by-one, you can use the utility script in the Cytoscape repository to initialize your workspace all at once (see below).
 
-### New in 3.3.0: Core Apps
-___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
-
-**Note that each core app has its own repository and there is no parent-child relationship between Cytoscape Core and the Apps.  This means, in the core building process, local core apps will not be used in the process.**
-
-As of Cytoscape 3.5.0 (November 2016), Cytoscape core distribution comes with the following core apps:
-
-```
-── apps
-   ├── biopax
-   ├── command-dialog
-   ├── core-apps-meta
-   ├── cyREST
-   ├── datasource-biogrid
-   ├── idmapper
-   ├── json
-   ├── network-analyzer
-   ├── network-merge
-   ├── opencl-cycl
-   ├── opencl-layout
-   ├── psi-mi
-   ├── sbml
-   ├── webservice-biomart-client
-   ├── webservice-psicquic-client
-   └── welcome
-```
-
-### Optional Projects
-This repository contains sample code for app developers and it will not be included in the core distribution.  **You don't have to build this repository if you just want to build the Cytoscape Core distribution.**
-
-* [samples](https://github.com/cytoscape/cytoscape-samples)
-
-----
 
 ## Building Development Version of Cytoscape 3
 Here is the step-by-step guide to build a development version of Cytoscape.
+
+#### tl;dr
+```
+git clone https://github.com/cytoscape/cytoscape.git
+cd cytoscape
+./cy.sh init
+cd cytoscape 
+mvn -fae install
+./gui-distribution/assembly/target/cytoscape/cytoscape.sh
+````
 
 ### Branch Management
 #### Cytoscape Core
@@ -195,6 +172,40 @@ Note that if you want to test the new build with a clean slate, we recommend to 
 
 ### Step 5: Continue with Eclipse project steps
 If you are developing in Eclipse, continue to set up with [these steps](https://github.com/cytoscape/cytoscape/wiki/Managing-Cytoscape-Git-Repos-in-Eclipse).
+
+----
+
+### New in 3.3.0: Core Apps
+___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
+
+**Note that each core app has its own repository and there is no parent-child relationship between Cytoscape Core and the Apps.  This means, in the core building process, local core apps will not be used in the process.**
+
+As of Cytoscape 3.5.0 (November 2016), Cytoscape core distribution comes with the following core apps:
+
+```
+── apps
+   ├── biopax
+   ├── command-dialog
+   ├── core-apps-meta
+   ├── cyREST
+   ├── datasource-biogrid
+   ├── idmapper
+   ├── json
+   ├── network-analyzer
+   ├── network-merge
+   ├── opencl-cycl
+   ├── opencl-layout
+   ├── psi-mi
+   ├── sbml
+   ├── webservice-biomart-client
+   ├── webservice-psicquic-client
+   └── welcome
+```
+
+### Optional Projects
+This repository contains sample code for app developers and it will not be included in the core distribution.  **You don't have to build this repository if you just want to build the Cytoscape Core distribution.**
+
+* [samples](https://github.com/cytoscape/cytoscape-samples)
 
 ----
 
