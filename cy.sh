@@ -82,11 +82,13 @@ function reset {
 }
 
 function pull {
+	echo "------------------------------------------------------------------------"
   for REPO in "${REPOSITORIES[@]}"; do
-    pushd $REPO
+    pushd $REPO > /dev/null
     echo "Downloading changes from upstream: $REPO"
     git pull
-    popd
+    popd > /dev/null
+		echo "------------------------------------------------------------------------"
   done
 }
 
@@ -100,11 +102,14 @@ function push {
 }
 
 function status {
+	echo "------------------------------------------------------------------------"
   for REPO in "${REPOSITORIES[@]}"; do
-    pushd $REPO || { echo Could not find subproject; exit 1; }
-    echo "\n- $REPO:"
+    pushd $REPO > /dev/null || { echo Could not find subproject; exit 1; }
+    echo "- $REPO:"
+		echo
     git status
-    popd
+    popd > /dev/null
+		echo "------------------------------------------------------------------------"
   done
 
 }
