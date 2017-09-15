@@ -27,7 +27,7 @@ While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Ecl
 
 ## Services
 
-Note that some Cytoscape functions rely on code deployed as services available on web servers. Generally, such services are callable by Cytoscape or directly by non-Cytoscape clients (e.g., Python) in the larger bioinformatics community. Some services are provided by other organizations (e.g., PSICQUIC for importing public networks), others are provided by Cytoscape developers (e.g., Diffusion) and are located in or rely on other GitHub repositories. Here is a list of known external repositories containing services called by Cytoscape and maintained by Cytoscape core developers:
+Note that some Cytoscape functions rely on code deployed as services available on web servers. Generally, such services are callable by Cytoscape or directly by non-Cytoscape clients (e.g., Python) in the larger bioinformatics community. Some services are provided by other organizations (e.g., PSICQUIC for importing public networks), while others are provided by Cytoscape developers (e.g., Diffusion) and are located in or rely on other GitHub repositories. Here is a list of known external repositories containing services called by Cytoscape and maintained by Cytoscape core developers:
 
 * [CXMate](https://github.com/cxmate/cxmate) - adapters that simplify service writing
 * [Diffusion](https://github.com/idekerlab/heat-diffusion) - called by Diffusion core app
