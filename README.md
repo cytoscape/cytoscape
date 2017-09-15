@@ -4,6 +4,7 @@
 
 #### Status:
 - 11/14/2016 - Updated for Cytoscape 3.5 release
+- 09/15/2016 - Added information on external repositories
 
 ## Introduction
 Cytoscape is a fairly complex application and its core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
@@ -23,6 +24,15 @@ You need the following tools to build latest development version of Cytoscape 3:
 * [_cy.sh_](https://github.com/cytoscape/cytoscape-scripts) - Utility script for building Cytoscape core distribution.
 
 While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
+
+## Services
+
+Note that some Cytoscape functions rely on code deployed as services available on web servers. Generally, such services are callable by Cytoscape or directly by non-Cytoscape clients (e.g., Python) in the larger bioinformatics community. Some services are provided by other organizations (e.g., PSICQUIC for importing public networks), others are provided by Cytoscape developers (e.g., Diffusion) and are located in or rely on other GitHub repositories. Here is a list of known external repositories containing services called by Cytoscape and maintained by Cytoscape core developers:
+
+* [CXMate](https://github.com/cxmate/cxmate) - adapters that simplify service writing
+* [Diffusion](https://github.com/idekerlab/heat-diffusion) - called by Diffusion core app
+
+Each repo contains information on how to build and deploy the service.
 
 ## Cytoscape 3 Core Directory Structure
 Cytoscape source code is maintained in several GitHub repositories, and is organized into a main project and several sub-projects.
