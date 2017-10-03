@@ -56,7 +56,7 @@ Cytoscape source code is maintained in several GitHub repositories, and is organ
 * [impl](https://github.com/cytoscape/cytoscape-impl) - Implementation bundles
 * [support](https://github.com/cytoscape/cytoscape-support) - Misc. bundles for building core
 * [gui-distribution](https://github.com/cytoscape/cytoscape-gui-distribution) - Actual distribution created from core projects and core apps
-* [app-developer](https://github.com/cytoscape/cytoscape-app-developers) - API JAR file for app developers
+* [app-developer](https://github.com/cytoscape/cytoscape-app-developer) - API JAR file for app developers
 
 Instead of cloning each sub-project's repository one-by-one, you can use the utility script in the Cytoscape repository to initialize your workspace all at once (see below).
 
