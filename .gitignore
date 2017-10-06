@@ -20,3 +20,8 @@ support/
 # Cytoscape directories created by this script
 cytoscape/
 apps/
+
+# Misc. IDE Files
+.idea/
+.settings/
+project.iml
