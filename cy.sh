@@ -38,7 +38,7 @@ REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid \
 json idmapper network-analyzer network-merge opencl-cycl opencl-layout \
 psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client \
-diffusion cy-ndex-2 copycat-layout)
+diffusion cy-ndex-2 copycat-layout cyBrowser)
 
 #######################################
 # Handling command-line arguments     #
