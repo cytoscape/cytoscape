@@ -336,6 +336,26 @@ Now you can build Cytoscape.  Run the new version and make sure your app is part
 ## Step 10: Bump up the app's version number
 Change the version number of your app to 3.x.x-SNAPSHOT.
 
+# Rules for updating Core Apps
+
+## 1. Keep _master_ branch always releasable
+If you are working on a new features, create feature branch from the master.  You can push the changes anytime to the feature branch.  Once it's ready and if you want to release a new version to the store, merge it back to the master and tag it.  For example, if you are working on _feature/a_ branch and want to release version 2.1.0, do the following:
+
+```
+git checkout master
+git merge feature/a
+mvn clean install (To test the build)
+git tag 2.1.0
+git push --tags
+```
+
+## 2. Tagged version should be deployed to the app store
+Once you tagged your commit, submit the new JAR to the store
+
+## 3. Update _gui-distribution/assembly/pom.xml_
+Core apps can be released any time, but if you want to include the new version of your core app in the next release of Cytoscape, you have to change the dependency in the pom file above.
+
+The dependency section starts from [here](https://github.com/cytoscape/cytoscape-gui-distribution/blob/develop/assembly/pom.xml#L202).
 
 ----
 ## Misc. Instruction for core developers
