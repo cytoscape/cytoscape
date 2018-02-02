@@ -448,6 +448,23 @@ To build installers for the most recently-built code, run the following command 
 ```
 mvn install
 ```
+### How to build release
+
+1. Make sure you have already installed install4j
+1. CD to Cytoscape project's top directory
+1. Switch to release branch: `cy switch release/3.x.x`
+1. Run `cy pull` to synchronize local repository to remote
+1. Run `mvn clean install` to make sure you can build all bundles without problems
+1. CD to `gui-distribution/packaging`
+1. Run `mvn clean install`
+1. CD to `target/install4j` and check you have installers for each platform
+1. (Optional you need Apple developer account and Mac to do this!) CD to `gui-distribution/packaging` and run `sign-dmg.sh 'your account'` and check you have signed dmg in `signed` directory
+
+Alternative way to build test releases is updating this shell script:
+
+* https://github.com/cytoscape/cytoscape-scripts/blob/develop/deploy_installers.sh
+
+This script contains machine-specific hard-coded values, and you need to understand and modify the code to run on your machine.
 
 ### Signing Mac Installer
 After that finishes, you will need to run the following command to sign the Mac DMG. This requires the Mac App Store certificate 'Developer ID Application' to be installed:
@@ -547,3 +564,4 @@ Windows implementations of Git and other tools differ slightly from the above.
 * To debug Cytoscape, follow this video: http://opentutorials.cgl.ucsf.edu/index.php/Tutorial:Remote_Execution_for_Debugging. To add all Cytoscape sources, use the Source tab in the Debug Configurations dialog, click the Add button, choose the Java Project container, and select all projects.
 * To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install`.
 * Valuable additional information: http://wiki.cytoscape.org/Cytoscape_3/CoreDevelopment
+
