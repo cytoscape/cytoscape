@@ -79,6 +79,8 @@ cd cytoscape
 mvn -fae install
 ./gui-distribution/assembly/target/cytoscape/cytoscape.sh
 ````
+[Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse (Oxygen) Import Instructions
+
 
 ### Branch Management
 #### Cytoscape Core
