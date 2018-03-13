@@ -37,7 +37,8 @@ REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 # List of Core Apps
 CORE_APPS=(biopax command-dialog core-apps-meta cyREST datasource-biogrid \
 json idmapper network-analyzer network-merge opencl-cycl opencl-layout \
-psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client)
+psi-mi sbml welcome webservice-psicquic-client webservice-biomart-client \
+cx diffusion cy-ndex-2 copycat-layout cyBrowser)
 
 #######################################
 # Handling command-line arguments     #
@@ -77,16 +78,18 @@ function reset {
     pushd $REPO
     git clean -f -d
     git reset --hard
-    popd ..
+    popd
   done
 }
 
 function pull {
+	echo "------------------------------------------------------------------------"
   for REPO in "${REPOSITORIES[@]}"; do
-    pushd $REPO
+    pushd $REPO > /dev/null
     echo "Downloading changes from upstream: $REPO"
     git pull
-    popd
+    popd > /dev/null
+		echo "------------------------------------------------------------------------"
   done
 }
 
@@ -100,11 +103,14 @@ function push {
 }
 
 function status {
+	echo "------------------------------------------------------------------------"
   for REPO in "${REPOSITORIES[@]}"; do
-    pushd $REPO || { echo Could not find subproject; exit 1; }
-    echo "\n- $REPO:"
+    pushd $REPO > /dev/null || { echo Could not find subproject; exit 1; }
+    echo "- $REPO:"
+		echo
     git status
-    popd
+    popd > /dev/null
+		echo "------------------------------------------------------------------------"
   done
 
 }
