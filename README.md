@@ -171,8 +171,8 @@ cytoscape     <-- parent level directory
 
 ### Step 3: Building Cytoscape
 1. Go into the **cytoscape** subproject directory ```cd ./cytoscape```
-1. Run Maven: ```mvn clean install```
-    - Option: use ```mvn -fae clean install``` (... see below)
+1. Run Maven: ```mvn clean install -U```
+    - Option: use ```mvn -fae clean install -U``` (... see below)
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
 
 ### Step 4: Run the new build
@@ -244,7 +244,7 @@ Assuming you are in the subproject directory of Cytoscape project (not the paren
 All of core apps are independent to each other and there is no dependency among those.  To build the apps, you can just _cd_ to the app's directory and run:
 
 ```
-mvn clean install
+mvn clean install -U
 ```
 
 to build the latest version.  You can also use the following command from top-level directory to build all core apps:
@@ -346,7 +346,7 @@ If you are working on a new features, create feature branch from the master.  Yo
 ```
 git checkout master
 git merge feature/a
-mvn clean install (To test the build)
+mvn clean install -U (To test the build)
 git tag 2.1.0
 git push --tags
 ```
@@ -456,9 +456,9 @@ mvn install
 1. CD to Cytoscape project's top directory
 1. Switch to release branch: `cy switch release/3.x.x`
 1. Run `cy pull` to synchronize local repository to remote
-1. Run `mvn clean install` to make sure you can build all bundles without problems
+1. Run `mvn clean install -U` to make sure you can build all bundles without problems
 1. CD to `gui-distribution/packaging`
-1. Run `mvn clean install`
+1. Run `mvn clean install -U`
 1. CD to `target/install4j` and check you have installers for each platform
 1. (Optional you need Apple developer account and Mac to do this!) CD to `gui-distribution/packaging` and run `sign-dmg.sh 'your account'` and check you have signed dmg in `signed` directory
 
@@ -564,6 +564,6 @@ Windows implementations of Git and other tools differ slightly from the above.
 * If you are developing on a virtual machine, be sure to configure around 8GB RAM and 50GB disk.
 * To create a Cytoscape project in Eclipse (once you have run `cy init`), select File | Import, and then select Maven | Existing Maven Projects. Browse to the Cytoscape directory created by `cy init`, and note that all pom.xml files are found. To finish the import, wait for all projects to be created and compiled. This may take several minutes.
 * To debug Cytoscape, follow this video: http://opentutorials.cgl.ucsf.edu/index.php/Tutorial:Remote_Execution_for_Debugging. To add all Cytoscape sources, use the Source tab in the Debug Configurations dialog, click the Add button, choose the Java Project container, and select all projects.
-* To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install`.
+* To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install -U`.
 * Valuable additional information: http://wiki.cytoscape.org/Cytoscape_3/CoreDevelopment
 
