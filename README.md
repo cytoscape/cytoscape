@@ -76,7 +76,7 @@ git clone https://github.com/cytoscape/cytoscape.git
 cd cytoscape
 ./cy.sh init
 cd cytoscape
-mvn -fae install -Dmaven.test.skip=true
+mvn -fae install -U -Dmaven.test.skip=true
 ./gui-distribution/assembly/target/cytoscape/cytoscape.sh
 ````
 [Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse (Oxygen) Import Instructions
