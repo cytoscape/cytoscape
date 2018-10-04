@@ -420,14 +420,16 @@ Then, change to the "parent" directory and repeat this command. When you are sat
 
 Though this will update most instances of the version number, it doesn't get them all. **You will need to manually update the version number in the following places:**
 
-* cytoscape.sh (in gui-distribution/assembly/src/bin)
-* cytoscape.bat (in gui-distribution/assembly/src/bin)
+* cytoscape.sh (in gui-distribution/assembly/src/main/bin)
+* cytoscape.bat (in gui-distribution/assembly/src/main/bin)
 * parent/pom.xml (look for taglets)
 * pom.xml in app-developer, gui-distribution, impl, support (look for properties tag)
 * pom.xml in src/main/resources/archetype-resources/pom.xml (for each archetype subdirectory in support/archetypes)
-* pom.xml in event-impl/it, model-impl/it, session-impl/impl, session-impl/integration-test, viewmodel-impl-parent/it, vizmap-impl-parent/it, work-swing-impl-parent/it
+* pom.xml in event-impl/it, model-impl/it, session-impl/impl, session-impl/integration-test, viewmodel-impl/it, vizmap-impl/it, work-swing-impl/it
 
 You can edit by hand, or use grep/sed to update these numbers.  Push and commit all changes to GitHub when you are done updating the version numbers.
+
+### Tip: To find all instances of a version, run ```grep -ri "Cytoscape-3.X.X" .``` from the parent directory.
 
 ## Releasing unreleased updates to core apps
 Typically, updates to core apps will be released separately from the Cytoscape core development cycle, and the development branch will be updated to use any new updates as they are released. However, if a core app depends on an unreleased API in the development version of Cytoscape, this won't work. In that case, we have to release the unreleased core app when Cytoscape is being released.
@@ -440,7 +442,7 @@ When we are ready to release, we need to deploy artifacts for each bundle to Nex
 ```
 mvn clean deploy
 ```
-Note that **you will need to configure the Nexus server in ~/.m2/settings.xml before doing this.** Deploying to Nexus will always rebuild Cytoscape, so each deployment will have a different timestamp/SHA hash than the last deployment (even if nothing has changed).
+Note that **you will need to configure the Nexus server in ~/.m2/settings.xml before doing this.** Deploying to Nexus will always rebuild Cytoscape, so each deployment will have a different timestamp/SHA hash than the last deployment (even if nothing has changed). The Cytoscape Project POM does not deploy and will throw an error. This is expected.
 
 ## Building Installers
 To build installers, we use a proprietary tool called install4j. This can be downloaded [here](https://www.ej-technologies.com/download/install4j/files) - the license key should be available to core team members. After installing install4j, you may need to update the path in the build configuration, which is set in the install4j.executable property in gui-distribution/packaging/pom.xml. The default value will work with the default install path on a Mac - this will need to be changed if you are building on a Windows/Linux system or install to a non-default path on Mac (it is advised not to commit changes to this property, as it is intended to be set locally).
