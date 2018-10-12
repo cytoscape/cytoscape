@@ -429,7 +429,7 @@ Though this will update most instances of the version number, it doesn't get the
 
 You can edit by hand, or use grep/sed to update these numbers.  Push and commit all changes to GitHub when you are done updating the version numbers.
 
-### Tip: To find all instances of a version, run ```grep -ri "Cytoscape-3.X.X" .``` from the parent directory.
+#### Tip: To find all instances of a version, run ```grep -ri "3.X.X-SNAPSHOT" .``` from the parent directory.
 
 ## Releasing unreleased updates to core apps
 Typically, updates to core apps will be released separately from the Cytoscape core development cycle, and the development branch will be updated to use any new updates as they are released. However, if a core app depends on an unreleased API in the development version of Cytoscape, this won't work. In that case, we have to release the unreleased core app when Cytoscape is being released.
