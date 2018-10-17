@@ -293,6 +293,22 @@ function init-all {
   cd -
 }
 
+function version-change {
+	vim gui-distribution/assembly/src/main/bin/cytoscape.* \
+		parent/pom.xml \
+		app-developer/pom.xml \
+		gui-distribution/pom.xml \
+		impl/pom.xml \
+		support/pom.xml \
+		support/archetypes/*/src/main/resources/archetype-resources/pom.xml \
+		impl/*/it/pom.xml \
+		impl/model-impl/performance/pom.xml \
+		impl/session-impl/impl/pom.xml \
+		impl/session-impl/integration-test/pom.xml
+
+	echo Call \'mvn clean\' and \'grep -ri "3.X.X" .\' to find other occurrences
+}
+
 ###############################################################################
 # Main workflow
 ###############################################################################
@@ -313,7 +329,7 @@ case $COMMAND in
   build-apps )    build-apps ;;
   switch-apps )  switch-apps ;;
   validate-apps )  validate-apps ;;
-
+	version-change ) version-change ;;
   * )      echo "Invalid command $COMMAND: $ERROR_MESSAGE"
           exit 1;;
 esac
