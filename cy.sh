@@ -296,10 +296,11 @@ function init-all {
 function run-all {
   echo "------------------------------------------------------------------------"
   echo "Executing command: $TARGET_DIR"
+	CMD="${TARGET_DIR}"
   for REPO in "${REPOSITORIES[@]}"; do
     echo "--in $REPO"
 		pushd $REPO > /dev/null
-		$TARGET_DIR
+		eval "$CMD"
     popd > /dev/null
 		echo "------------------------------------------------------------------------"
   done
