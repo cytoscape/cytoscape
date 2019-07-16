@@ -1,3 +1,7 @@
+This is the primary Maven project for building the Cytoscape Desktop application.
+
+To report bugs in this or other Cytoscape Desktop sub-projects, please use the bug report form [here](https://cytoscape.org/bug-report.html).
+
 # Cytoscape Core: Building Guide
 
 ![](https://avatars1.githubusercontent.com/u/956141?v=3&s=200)
