@@ -1,0 +1,17 @@
+language: java
+services:
+  - xvfb
+sudo: false
+jdk:
+- openjdk11
+install:
+- cp .travis.settings.xml $HOME/.m2/settings.xml
+
+branches:
+  only:
+  - java11
+
+script: 
+  - "./cy.sh init"
+  - "cd cytoscape"
+  - "mvn clean install -U -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
