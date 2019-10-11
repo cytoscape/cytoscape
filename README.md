@@ -23,7 +23,7 @@ This document is a guide for developers who want to build the entire Cytoscape c
 You need the following tools to build latest development version of Cytoscape 3:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or later
+* [JDK 11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
 * [Maven 3](https://maven.apache.org/) (Tested with 3.3.x)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
