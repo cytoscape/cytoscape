@@ -36,7 +36,7 @@ REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 
 # List of Core Apps
 CORE_APPS=(analyzer biopax core-apps-meta cyREST \
-json idmapper network-analyzer network-merge opencl-cycl opencl-layout \
+json idmapper network-merge opencl-cycl opencl-layout \
 psi-mi sbml webservice-psicquic-client webservice-biomart-client \
 cx diffusion cy-ndex-2 copycat-layout cyBrowser)
 
