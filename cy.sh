@@ -35,7 +35,7 @@ APP_URL='git@github.com:cytoscape/'
 REPOSITORIES=(. parent api impl support gui-distribution app-developer)
 
 # List of Core Apps
-CORE_APPS=(analyzer biopax core-apps-meta cyREST \
+CORE_APPS=(amatreader analyzer biopax core-apps-meta cyREST \
 json idmapper network-merge opencl-cycl opencl-layout \
 psi-mi sbml webservice-psicquic-client webservice-biomart-client \
 cx diffusion cy-ndex-2 copycat-layout cyBrowser)
