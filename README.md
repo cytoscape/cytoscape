@@ -540,8 +540,12 @@ drwxr-xr-x 4 root root      4096 Mar 28 11:21 API
 
 
 ### Updating core apps
-When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow. Before releasing, the version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
+When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow.
 
+1. Update the version number in the pom.xml file. The version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
+1. Merge your changes to the main repo.
+1. Clone the repository and make sure it compiles.
+1. Tag this place in the repository with the version. ```git tag MAJOR.MINOR.PATCH```. Push this tag to the remote repository using ```git push origin MAJOR.MINOR.PATCH``` to push the current this tag or ```git push origin --tags``` to push all tags in the local repo.
 1. Deploy to Nexus using ```mvn deploy``` - note that you will need to have our repository properly configured in ~/.m2/settings.xml to do this.
 1. Update the gui-distribution/assembly/pom.xml file in Cytoscape core to depend on the new version of the core app.
 1. Submit the new core app to the App Store using the web-based submission process at apps.cytoscape.org.
