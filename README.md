@@ -96,7 +96,7 @@ Since core apps have their own release cycles, they have different branching sch
 ### Step 1: Clone the Main Project
 1. Install required tools: JDK, Maven, and Git. On some systems, these may be preinstalled - you can use those versions if they are relatively recent, though we would recommend Oracle's JDK over OpenJDK.
 
-1. Add JDK, Maven, and Git to your system PATH if necessary. On some platforms, this is done automatically on installation - try running mvn, git, or java at a command line to check this.
+2. Add JDK, Maven, and Git to your system PATH if necessary. On some platforms, this is done automatically on installation - try running mvn, git, or java at a command line to check this.
 
  If you need to add tools to the PATH, the steps you should follow vary by operating system. On Windows, this can be done in the Environment Variables dialog - open the file browser, right click on "Computer" or "This PC", select "Advanced system settings", then click "Environment Variables" - you should be able to edit the the PATH by selecting the PATH environment variable and clicking Edit. On Mac or Linux, you would need to edit the .profile or .bashrc file in your home directory to set environment variables, depending on the type of shell you are using. It may be helpful to add the following to .profile and set the PATH in .bashrc so that all shells will read the same values:
 
@@ -114,7 +114,7 @@ Since core apps have their own release cycles, they have different branching sch
 
  Use the directories where binaries are located, as this wiill ensure that the command line knows where to find them.
 
-1. Set the JAVA_HOME environment variable to the JDK 1.8 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 1.8 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
+3. Set the JAVA_HOME environment variable to the JDK 11 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 11 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
 
  ```
  export JAVA_HOME=/path/to/java
@@ -122,16 +122,18 @@ Since core apps have their own release cycles, they have different branching sch
 
  On Mac, you can use```$(/usr/libexec/java_home -v 1.8)``` instead of the actual path to automatically specify the latest 1.8 JVM installed.
 
-1. If you are using Git for the first time, you need to set your name and e-mail address. To do this, use the following commands:
+4. MAVEN_HOME, and M2_HOME to your environment variables. On some platforms, this is done automatically on installation. These are environment variables that can be set using the same methods as JAVA_HOME and PATH, and should point to the Maven installation directory (example: `/path/to/Maven/apache-maven-3.6.3`. Use the relevant echo command to test these (example: `echo $MAVEN_HOME` for Ubuntu/Mac or `echo %MAVEN_HOME%` on Windows). 
+
+5. If you are using Git for the first time, you need to set your name and e-mail address. To do this, use the following commands:
  ```
  git config user.name "Your Name"
  git config user.email yourname@yourname.com
  ```
  Substitute your actual name and e-mail address in the commands.
 
-1. Generate an ssh key and set it up on GitHub. To do this, you will first need to be added to the Cytoscape GitHub project by one of the core developers. Then, click the arrow in the top-right hand corner of any GitHub page and choose "Settings". Click "SSH and GPG keys", then follow the instructions on the linked guide to generate an SSH key on your particular operating system. Once you have generated an SSH key, return to the original "SSH and GPG keys" page and add the generated key using "New SSH key".
+6. Generate an ssh key and set it up on GitHub. To do this, you will first need to be added to the Cytoscape GitHub project by one of the core developers. Then, click the arrow in the top-right hand corner of any GitHub page and choose "Settings". Click "SSH and GPG keys", then follow the instructions on the linked guide to generate an SSH key on your particular operating system. Once you have generated an SSH key, return to the original "SSH and GPG keys" page and add the generated key using "New SSH key".
 
-1. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
+7. Clone this repository: ```git clone https://github.com/cytoscape/cytoscape.git```
     - Now you can see a new directory named **cytoscape**:
 
 ```
