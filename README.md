@@ -120,7 +120,7 @@ Since core apps have their own release cycles, they have different branching sch
  export JAVA_HOME=/path/to/java
  ```
 
- On Mac, you can use```$(/usr/libexec/java_home -v 1.8)``` instead of the actual path to automatically specify the latest 1.8 JVM installed.
+ On Mac, you can use```$(/usr/libexec/java_home -v 11)``` instead of the actual path to automatically specify the latest 11 JVM installed.
 
 4. MAVEN_HOME, and M2_HOME to your environment variables. On some platforms, this is done automatically on installation. These are environment variables that can be set using the same methods as JAVA_HOME and PATH, and should point to the Maven installation directory (example: `/path/to/Maven/apache-maven-3.6.3`. Use the relevant echo command to test these (example: `echo $MAVEN_HOME` for Ubuntu/Mac or `echo %MAVEN_HOME%` on Windows). 
 
