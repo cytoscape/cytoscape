@@ -480,7 +480,7 @@ This script contains machine-specific hard-coded values, and you need to underst
 After that finishes, you will need to run the following command to sign the Mac DMG. This requires the Mac App Store certificate 'Developer ID Application' to be installed:
 
 ```
-./sign-dmg.sh 'Developer ID Application'
+xcrun altool --notarize-app --primary-bundle-id {UNIQUE_NOTARIZATION_ID} --username macdeveloper@email.com --password "yourpasswordhere" --file Cytoscape_{VERSION}_macos.dmg
 ```
 
 After this is done, you would upload the built installers (in the target/install4j subdirectory of packaging, with the exception of the signed DMG which will be in target/install4j/signed) to the desired host (this would generally be chianti). If you are building a full release, also upload the swing-app-api JAR (in api/swing-app/api/target under the Cytoscape build root) and the API Javadocs (in app-developer/target/API) in the same directory.
