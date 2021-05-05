@@ -319,17 +319,25 @@ Once you finish all of the changes above, build it locally.  If everything looks
 ## Step 5: Move your repository to the Cytoscape org account
 Move your app's repository to Cytoscape org account: https://github.com/cytoscape
 
-## Step 6: Setup Jenkins CI job
-You need to setup a Jenkins job for CI.  You need an ID and password to setup a new job.
+## Step 6: Setup Travis CI job
+You can set up a Travis CI.  You need to be registered with Travis to setup a new job, and have a username and password for https://nrnb-nexus.ucsd.edu/ to deploy to nexus.
 
-* Go to http://code.cytoscape.org/jenkins/
-* Login to the server as an admin
-* Copy the job from any of the existing coreapp jobs
-* Name the job with standard prefix, e.g.,  _coreapp-Your-App-Name_
-* Update the source code repository URL
+* Go to https://travis-ci.com/github/cytoscape
+* Find and select the relevant repository in the repositories list
+* Follow the steps to enable Travis CI for that repository
+* You can use the Travis CI setup as well as the ```.travis.yml``` from the cytoscape build as a guide to building and deploying your app.
 
 ## Step 7: Push your changes to the remote repository
-If Jenkins job is ready, it should start the build once you push your changes to the remote GitHub repository.  If the build result is _success_, then Jenkins automatically deploy the new JAR file to the [Nexus repository](http://code.cytoscape.org/nexus/index.html#view-repositories;public~browsestorage).
+If you have set up Travis CI, it will automatically deploy changes to nexus.
+
+If you haven't set up Travis CI, you will need to deploy manually using:
+
+```
+mvn clean deploy
+```
+
+This step requires that you have appropriate credentials for https://nrnb-nexus.ucsd.edu/ and that they are added to your Maven [settings.xml](https://maven.apache.org/settings.html#servers) file.
+
 
 ## Step 8: Add your app to _assembly_ pom
 Once the new app is in Nexus repository, you can use it from the core.  Add your app as a new dependency in **cytoscape-gui-distribution/assembly/pom.xml**:
