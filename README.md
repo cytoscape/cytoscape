@@ -417,7 +417,7 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 This section is for core developers only.
 
 ## Introduction
-There are several steps involved in building a release. Some of these can be automated using the [cytoscape-scripts](https://github.com/cytoscape/cytoscape-scripts) - however, these may not completely replicate the steps below and have not been updated in a while. As such, it is recommended to do the following steps manually.
+These are general instructions on how to build a Cytoscape release locally. The Cytoscape Build Server (https://cytoscape-builds.ucsd.edu/) contains scripts to automate this process and should be used to generate releases. However, the general steps of the release build are outlined here to provide additional reference material.
 
 ## Updating version numbers
 When preparing to make a new release (or start a new development branch), it is necessary to update the version numbers in Cytoscape to reflect this release. This is typically done at the release-candidate state, and also when updating the development branch for the next development version.
