@@ -319,17 +319,25 @@ Once you finish all of the changes above, build it locally.  If everything looks
 ## Step 5: Move your repository to the Cytoscape org account
 Move your app's repository to Cytoscape org account: https://github.com/cytoscape
 
-## Step 6: Setup Jenkins CI job
-You need to setup a Jenkins job for CI.  You need an ID and password to setup a new job.
+## Step 6: Setup Travis CI job
+You can set up a Travis CI.  You need to be registered with Travis to setup a new job, and have a username and password for https://nrnb-nexus.ucsd.edu/ to deploy to nexus.
 
-* Go to http://code.cytoscape.org/jenkins/
-* Login to the server as an admin
-* Copy the job from any of the existing coreapp jobs
-* Name the job with standard prefix, e.g.,  _coreapp-Your-App-Name_
-* Update the source code repository URL
+* Go to https://travis-ci.com/github/cytoscape
+* Find and select the relevant repository in the repositories list
+* Follow the steps to enable Travis CI for that repository
+* You can use the Travis CI setup as well as the ```.travis.yml``` from the cytoscape build as a guide to building and deploying your app.
 
 ## Step 7: Push your changes to the remote repository
-If Jenkins job is ready, it should start the build once you push your changes to the remote GitHub repository.  If the build result is _success_, then Jenkins automatically deploy the new JAR file to the [Nexus repository](http://code.cytoscape.org/nexus/index.html#view-repositories;public~browsestorage).
+If you have set up Travis CI, it will automatically deploy changes to nexus.
+
+If you haven't set up Travis CI, you will need to deploy manually using:
+
+```
+mvn clean deploy
+```
+
+This step requires that you have appropriate credentials for https://nrnb-nexus.ucsd.edu/ and that they are added to your Maven [settings.xml](https://maven.apache.org/settings.html#servers) file.
+
 
 ## Step 8: Add your app to _assembly_ pom
 Once the new app is in Nexus repository, you can use it from the core.  Add your app as a new dependency in **cytoscape-gui-distribution/assembly/pom.xml**:
@@ -409,7 +417,7 @@ The Cytoscape project is organized as a nested set of Git repositories. This pro
 This section is for core developers only.
 
 ## Introduction
-There are several steps involved in building a release. Some of these can be automated using the [cytoscape-scripts](https://github.com/cytoscape/cytoscape-scripts) - however, these may not completely replicate the steps below and have not been updated in a while. As such, it is recommended to do the following steps manually.
+These are general instructions on how to build a Cytoscape release locally. The Cytoscape Build Server (https://cytoscape-builds.ucsd.edu/) contains scripts to automate this process and should be used to generate releases. However, the general steps of the release build are outlined here to provide additional reference material.
 
 ## Updating version numbers
 When preparing to make a new release (or start a new development branch), it is necessary to update the version numbers in Cytoscape to reflect this release. This is typically done at the release-candidate state, and also when updating the development branch for the next development version.
@@ -460,6 +468,8 @@ mvn install
 ```
 ### How to build release
 
+These are general instructions on how to build a Cytoscape release locally. The Cytoscape Build Server (https://cytoscape-builds.ucsd.edu/) contains scripts to automate this process and should be used to generate releases. However, the general steps of the release build are outlined here for reference.
+
 1. Make sure you have already installed install4j
 1. CD to Cytoscape project's top directory
 1. Switch to release branch: `cy switch release/3.x.x`
@@ -477,13 +487,14 @@ Alternative way to build test releases is updating this shell script:
 This script contains machine-specific hard-coded values, and you need to understand and modify the code to run on your machine.
 
 ### Signing Mac Installer
-After that finishes, you will need to run the following command to sign the Mac DMG. This requires the Mac App Store certificate 'Developer ID Application' to be installed:
+
+After the installers are built, you will need to sign the dmg installer (in the ```target/install4j``` subdirectory of packaging) on a Mac machine with Xcode installed as well as the Mac App Store certificate 'Developer ID Application'. To sign the Mac DMG run the following code, substituting a valid Cytoscape Mac developer ID and password, as well as the appropriate VERSION and UNIQUE_NOTARIZATION ID:
 
 ```
-./sign-dmg.sh 'Developer ID Application'
+xcrun altool --notarize-app --primary-bundle-id {UNIQUE_NOTARIZATION_ID} --username macdeveloper@email.com --password "yourpasswordhere" --file Cytoscape_{VERSION}_macos.dmg
 ```
 
-After this is done, you would upload the built installers (in the target/install4j subdirectory of packaging, with the exception of the signed DMG which will be in target/install4j/signed) to the desired host (this would generally be chianti). If you are building a full release, also upload the swing-app-api JAR (in api/swing-app/api/target under the Cytoscape build root) and the API Javadocs (in app-developer/target/API) in the same directory.
+After this is done, draft a github release at https://github.com/cytoscape/cytoscape/releases and upload the built installers. If you are building a full release, also upload the swing-app-api JAR (in api/swing-app/api/target under the Cytoscape build root) and the API Javadocs (in app-developer/target/API).
 
 ## Merging a new release into the master branch
 When a new release is cut, the release branch (or develop branch if that is being used) needs to be merged into the master branch. To do this, first make sure all your changes are checked in. Then, switch to the master branch. You can use the cy.sh script for this - to do that, run from the Cytoscape build root:
@@ -520,19 +531,8 @@ There are a few other steps that need to be completed when building a release. T
 
 1. Update the version number for the help toolbar icon (in core-task-impl/src/main/java/org/cytoscape/task/internal/help/HelpTaskFactory.java)
 1. Update the version number in news.html, and add the announcement for a new release. This file is located at
-http://chianti.ucsd.edu/cytoscape-news/news.html (in chianti:/var/www/html/cytoscape-news/news.html).
+http://chianti.ucsd.edu/cytoscape-news/news.html (in chianti:/data/www/html/cytoscape-news/news.html).
 1. Tag the manual to correspond with the new release. The manual is now a GitHub repository (located [here](https://github.com/cytoscape/cytoscape-manual)), and tagging it will create a new version of the document on ReadTheDocs. This is referenced by the Cytoscape application (using its internal version to determine the URL) - when tagging, the version number should not include any prefix or suffix and should always have three digits and two decimal places (so 3.6 should be "3.6.0").
-1. Copy the release to the chianti:/var/www/html/cytoscape-xxx> directory, where xxx is three digits (e.g., 3.6.0). The release should have 6 files, including the installers and API/Javadoc. For example:
-```
-drwxr-xr-x 4 root root      4096 Mar 28 11:21 API
--rw-r--r-- 1 root root 125258330 Mar 28 10:39 Cytoscape_3_5_0_macos.dmg
--rw-r--r-- 1 root root 122584566 Mar 28 09:53 cytoscape-3.5.0.tar.gz
--rw-r--r-- 1 root root 124283340 Mar 28 09:53 Cytoscape_3_5_0_unix.sh
--rw-r--r-- 1 root root 125879296 Mar 28 09:53 Cytoscape_3_5_0_windows_32bit.exe
--rw-r--r-- 1 root root 125973504 Mar 28 09:53 Cytoscape_3_5_0_windows_64bit.exe
--rw-r--r-- 1 root root 122834368 Mar 28 09:53 cytoscape-3.5.0.zip
--rw-r--r-- 1 root root      4470 Mar 28 12:09 swing-app-api-3.5.0.jar
-```
 1. Update the CYTOSCAPE_VERSION in the windows.bat, linux.sh and mac.sh scripts in the cytoscape-scripts repo (i.e., OS versions and Cytoscape version).
 1. Create the Welcome Letter, based on a previous copy.
 1. Update the [cytoscape.org web site](http://github.com/cytoscape/cytoscape.github.com) to have a new version number, release notes and Welcome Letter.
