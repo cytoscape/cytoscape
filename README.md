@@ -303,8 +303,8 @@ All of the Cytoscape core apps should respect the following conventions for cons
   - The core app should work as an independent repository.  This means you should not depends on any parent pom file.
   - All instructions, including compiler arguments and parameters for BND plugin should be provided
   - Make sure you have proper information for the following sections:
-    - repositories
-    - distributionManagement
+    - repositories ( You can just copy these from an existing pom, like CyREST: https://github.com/cytoscape/cyREST/blob/3e1ef7fcf867dbcd80749618c4134173e02688e9/pom.xml#L35)
+    - distributionManagement ( You can just copy these from an existing pom, like CyREST: https://github.com/cytoscape/cyREST/blob/3e1ef7fcf867dbcd80749618c4134173e02688e9/pom.xml#L35)
     - scm
     - build
 1. **Update version number**
@@ -330,8 +330,47 @@ You can set up a Travis CI.  You need to be registered with Travis to setup a ne
 ## Step 7: Push your changes to the remote repository
 If you have set up Travis CI, it will automatically deploy changes to nexus.
 
-If you haven't set up Travis CI, you will need to deploy manually using:
+If you haven't set up Travis CI, you will need to deploy manually follow the steps below:
 
+Add the code below to your maven settings.xml file (location varies between OS's, check the Maven documentation for location).
+
+   If you use brew to install maven, then the settings file should be in: ```/usr/local/Cellar/maven/<version>/libexec/conf```
+
+```
+<servers>
+  <server>
+    <id>releases</id>
+    <username>deployment</username>
+    <password>deploy</password>
+  </server>
+  <server>
+    <id>snapshots</id>
+    <username>deployment</username>
+    <password>deploy</password>
+  </server>
+  <server>
+    <id>thirdparty</id>
+    <username>deployment</username>
+    <password>deploy</password>
+  </server>
+  <server>
+    <id>cytoscape_releases</id>
+    <username>cytoscape_deployer</username>
+    <password>turtlesallthewaydown</password>
+  </server>
+  <server>
+    <id>cytoscape_snapshots</id>
+    <username>cytoscape_deployer</username>
+    <password>turtlesallthewaydown</password>
+  </server>
+  <server>
+    <id>cytoscape_thirdparty</id>
+    <username>cytoscape_deployer</username>
+    <password>turtlesallthewaydown</password>
+  </server>
+</servers>
+```
+And then run:
 ```
 mvn clean deploy
 ```
