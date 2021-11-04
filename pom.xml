@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 
 	<!-- This version number should be same as parent (for consistency) -->
-	<version>3.9.0</version>
+	<version>3.9.1-SNAPSHOT</version>
 	<name>Cytoscape Project POM</name>
 
 	<modules>
