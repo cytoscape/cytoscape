@@ -87,6 +87,8 @@ mvn -fae install -U -Dmaven.test.skip=true
 
 *NOTE: For first-time builds, the build order matters and you may see an error involving events-api. The solution is to first build api/events-api, then build api, then build the entire package.*
 
+*ANOTHER NOTE: If you see errors about "Could not transfer artifact" and "Blocked mirror for repositories," then you may be running a newer version of Maven that doesn't work for our repo at this time. Try Maven v3.6.0*
+
 ### Branch Management
 #### Cytoscape Core
 For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.
