@@ -85,6 +85,7 @@ mvn -fae install -U -Dmaven.test.skip=true
 ````
 [Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse Import Instructions
 
+*NOTE: For first-time builds, the build order matters and you may see an error involving events-api. The solution is to first build api/events-api, then build api, then build the entire package.*
 
 ### Branch Management
 #### Cytoscape Core
