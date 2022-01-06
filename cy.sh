@@ -305,6 +305,25 @@ function run-all {
   done
 }
 
+###########################################
+# Core building functions for newbs
+###########################################
+
+function build-core {
+  mvn -fae install -U -Dmaven.test.skip=true
+}
+
+function build-core-magic {
+  cd api/event-api
+  mvn install -Dmaven.test.skip=true
+  cd ..
+  mvn install -Dmaven.test.skip=true
+  cd ../impl
+  mvn install -Dmaven.test.skip=true
+  cd ..
+  build-core
+}
+
 ###############################################################################
 # Main workflow
 ###############################################################################
@@ -326,6 +345,8 @@ case $COMMAND in
   switch-apps )  switch-apps ;;
   validate-apps )  validate-apps ;;
   run-all ) run-all ;;
+  build-core ) build-core ;;
+  build-core-magic ) build-core-magic ;;
   * )      echo "Invalid command $COMMAND: $ERROR_MESSAGE"
           exit 1;;
 esac
