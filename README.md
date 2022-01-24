@@ -575,6 +575,7 @@ There are a few other steps that need to be completed when building a release. T
 1. Update the version number in news.html, and add the announcement for a new release. This file is located at
 http://chianti.ucsd.edu/cytoscape-news/news.html (in chianti:/data/www/html/cytoscape-news/news.html).
 1. Tag the manual to correspond with the new release. The manual is now a GitHub repository (located [here](https://github.com/cytoscape/cytoscape-manual)), and tagging it will create a new version of the document on ReadTheDocs. This is referenced by the Cytoscape application (using its internal version to determine the URL) - when tagging, the version number should not include any prefix or suffix and should always have three digits and two decimal places (so 3.6 should be "3.6.0").
+1. Verify that a tagged release has been made: https://github.com/cytoscape/cytoscape/releases.
 1. Update the CYTOSCAPE_VERSION in the windows.bat, linux.sh and mac.sh scripts in the cytoscape-scripts repo (i.e., OS versions and Cytoscape version).
 1. Create the Welcome Letter, based on a previous copy.
 1. Update the Cytoscape.org web site ([download.js](https://github.com/cytoscape/cytoscape.github.com/blob/master/js/download.js) and [setup_page.js](https://github.com/cytoscape/cytoscape.github.com/blob/master/js/setup_page.js)) to have a new version number, release notes and Welcome Letter.
