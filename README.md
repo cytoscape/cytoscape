@@ -7,9 +7,7 @@ To report bugs in this or other Cytoscape Desktop sub-projects, please use the b
 ![](https://avatars1.githubusercontent.com/u/956141?v=3&s=200)
 
 #### Status:
-- 11/7/2017 - Updated for 3.6.0 release
-- 11/14/2016 - Updated for Cytoscape 3.5 release
-- 09/15/2016 - Added information on external repositories
+- 3/2023 - Updated for 3.10.0 release
 
 ## Introduction
 Cytoscape is a fairly complex application and its core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
@@ -20,11 +18,11 @@ This document is a guide for developers who want to build the entire Cytoscape c
 * [Cytoscape Developer Documents](http://www.cytoscape.org/documentation_developers.html)
 
 ## Requirements
-You need the following tools to build latest development version of Cytoscape 3:
+You need the following tools to build latest development version of Cytoscape 3.10:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
-* [Maven 3](https://maven.apache.org/) (Tested with 3.3.x)
+* [JDK 17](https://www.oracle.com/java/technologies/downloads/#java17)
+* [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
 
@@ -202,37 +200,15 @@ If you are developing in Eclipse, continue to set up with [these steps](https://
 
 ----
 
-## New from 3.3.0: Core Apps
+## New from 3.10.0: Core Apps
 ___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
 
 **Note that each core app has its own repository and there is no parent-child relationship between Cytoscape Core and the Apps.  This means, in the core building process, local core apps will not be used in the process.**
 
-As of Cytoscape 3.5.0 (November 2016), Cytoscape core distribution comes with the following core apps:
+As of Cytoscape 3.10.0 (March 2023), Cytoscape core distribution comes with the following core apps:
 
-```
-├── biopax
-├── command-dialog
-├── copycat-layout
-├── core-apps-meta
-├── cx
-├── cy-ndex-2
-├── cyBrowser
-├── cyREST
-├── diffusion
-├── idmapper
-├── json
-├── network-analyzer
-├── network-merge
-├── opencl-cycl
-├── opencl-layout
-├── psi-mi
-├── sbml
-├── webservice-biomart-client
-├── webservice-psicquic-client
-└── welcome
+https://github.com/cytoscape/cytoscape-gui-distribution/blob/8a28dead77d39f06747836a326766997974c0e70/assembly/pom.xml#L447
 
-20 directories, 0 files
-```
 
 ### Optional Projects
 This repository contains sample code for app developers and it will not be included in the core distribution.  **You don't have to build this repository if you just want to build the Cytoscape Core distribution.**
