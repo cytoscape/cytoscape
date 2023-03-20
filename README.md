@@ -7,7 +7,7 @@ To report bugs in this or other Cytoscape Desktop sub-projects, please use the b
 ![](https://avatars1.githubusercontent.com/u/956141?v=3&s=200)
 
 #### Status:
-- 3/2023 - Updated for 3.10.0 release
+- 4/2023 - Updated for 3.10.0 release
 
 ## Introduction
 Cytoscape is a fairly complex application and its core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
@@ -373,6 +373,19 @@ The core apps list is hard-coded in js4cytoscape repo develop branch for the use
 ## Step 11: Bump up the app's version number
 Change the version number of your app to 3.x.x-SNAPSHOT.
 
+
+## Step 12: Update description on the App Store
+Update app description on App store (https://apps.cytoscape.org/) page.
+
+* Add 'core app' tag in categories.
+
+* Add the following paragraph on the app page:
+```
+Note: This app is pre-installed in Cytoscape 3.x or later
+You should not download this app from the store yourself. If Cytoscape detects that a new version is available in the App Store, it will notify you as it's starting and will give you a chance to download it directly.
+
+You should not download this app if your Cytoscape is earlier than 3.x. An earlier version of this app is pre-installed in your Cytoscape, and this app cannot replace it.
+```
 # Rules for updating Core Apps
 
 ## 1. Keep _master_ branch always releasable
