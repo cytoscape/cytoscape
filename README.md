@@ -371,7 +371,7 @@ Now you can build Cytoscape.  Run the new version and make sure your app is part
 The core apps list is hard-coded in js4cytoscape repo develop branch for the use of app manager. The new core app should be added at the end of this [list](https://github.com/cytoscape/js4cytoscape/blob/29b12daf67adb5bb1f4d45042bc0c7803260abe3/packages/js4cytoscape/appmanager.html#L167).
 
 ## Step 11: Bump up the app's version number
-Change the version number of your app to 3.x.x-SNAPSHOT.
+Change the version number of your app to 3.x.x.
 
 
 ## Step 12: Update description on the App Store
