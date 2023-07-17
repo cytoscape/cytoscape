@@ -473,7 +473,7 @@ Though this will update most instances of the version number, it doesn't get the
 * parent/pom.xml (look for taglets)
 * pom.xml in app-developer, gui-distribution, impl, support (look for properties tag)
 * pom.xml in src/main/resources/archetype-resources/pom.xml (for each archetype subdirectory in support/archetypes)
-* pom.xml in -impl/it, model-impl/it, model-impl/performance, session-impl/impl, session-impl/integration-test, viewmodel-impl/it, vizmap-impl/it, work-swing-impl/it
+* pom.xml in event-impl/it, model-impl/it, model-impl/performance, session-impl/impl, session-impl/integration-test, viewmodel-impl/it, vizmap-impl/it, work-swing-impl/it
 
 You can edit by hand, or use grep/sed to update these numbers.  Push and commit all changes to GitHub when you are done updating the version numbers.
 
