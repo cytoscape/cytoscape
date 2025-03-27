@@ -8,6 +8,7 @@ To report bugs in this or other Cytoscape Desktop sub-projects, please use the b
 
 #### Status:
 - 4/2023 - Updated for 3.10.0 release
+- 3/2025 - Updated for 3.10.3 release
 
 ## Introduction
 Cytoscape is a fairly complex application and its core distribution has multiple repositories for managing its code.  This repository contains top-level pom file and utility script for building Cytoscape core distribution.  Most App developers won't need to clone this repository.  Keep reading below to learn about how to work with Cytoscape's source code.
@@ -21,7 +22,7 @@ This document is a guide for developers who want to build the entire Cytoscape c
 You need the following tools to build latest development version of Cytoscape 3.10:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 17](https://www.oracle.com/java/technologies/downloads/#java17)
+* [JDK 17](https://adoptium.net/temurin/releases/?version=17)
 * [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
@@ -95,11 +96,12 @@ For the core projects, development version always uses the branch named **develo
 Since core apps have their own release cycles, they have different branching scheme.  Usually, features are developed in feature branches, and there is only one common branch called **master**.  Head of the master branch is always the latest development version of the core app.    
 
 ### Step 1: Clone the Main Project
-1. Install required tools: JDK, Maven, and Git. On some systems, these may be preinstalled - you can use those versions if they are relatively recent, though we would recommend Oracle's JDK over OpenJDK.
+1. Install required tools: JDK, Maven, and Git. On some systems, these may be preinstalled - you can use those versions if they are relatively recent. Released versions of Cytoscape use
+JDKs from [Eclipse Adoptium](https://adoptium.net/).
 
 2. Add JDK, Maven, and Git to your system PATH if necessary. On some platforms, this is done automatically on installation - try running mvn, git, or java at a command line to check this.
 
- If you need to add tools to the PATH, the steps you should follow vary by operating system. On Windows, this can be done in the Environment Variables dialog - open the file browser, right click on "Computer" or "This PC", select "Advanced system settings", then click "Environment Variables" - you should be able to edit the the PATH by selecting the PATH environment variable and clicking Edit. On Mac or Linux, you would need to edit the .profile or .bashrc file in your home directory to set environment variables, depending on the type of shell you are using. It may be helpful to add the following to .profile and set the PATH in .bashrc so that all shells will read the same values:
+ If you need to add tools to the PATH, the steps you should follow vary by operating system. On Windows, this can be done in the Environment Variables dialog - open the file browser, right click on "Computer" or "This PC", select "Advanced system settings", then click "Environment Variables" - you should be able to edit the the PATH by selecting the PATH environment variable and clicking Edit. On Mac or Linux, you would need to edit the .profile, .bashrc or .zshrc file in your home directory to set environment variables, depending on the type of shell you are using. It may be helpful to add the following to .profile and set the PATH in .bashrc so that all shells will read the same values:
 
  ```
  if [ -f ~/.bashrc ]; then
@@ -113,15 +115,15 @@ Since core apps have their own release cycles, they have different branching sch
  export PATH=/path/to/java/bin:/path/to/maven/bin:/path/to/git/bin:$PATH
  ```
 
- Use the directories where binaries are located, as this wiill ensure that the command line knows where to find them.
+ Use the directories where binaries are located, as this will ensure that the command line knows where to find them.
 
-3. Set the JAVA_HOME environment variable to the JDK 11 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 11 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
+3. Set the JAVA_HOME environment variable to the JDK 17 installation directory. This is only necessary if you have multiple versions of Java installed - if JDK 17 is the only one, Cytoscape will be able to automatically find it without the need for an environment variable. To do this, follow the same instructions as above, but for JAVA_HOME instead of PATH. On Windows, you may have to click the "Add..." button under System Variables if JAVA_HOME does not already exist. On Mac/Linux, you would add an additional line to .bashrc (or .profile if you set environment variables there) like the following.
 
  ```
  export JAVA_HOME=/path/to/java
  ```
 
- On Mac, you can use```$(/usr/libexec/java_home -v 11)``` instead of the actual path to automatically specify the latest 11 JVM installed.
+ On Mac, you can use ```/usr/libexec/java_home -V``` to show the paths of all installed JVMs.
 
 4. MAVEN_HOME, and M2_HOME to your environment variables. On some platforms, this is done automatically on installation. These are environment variables that can be set using the same methods as JAVA_HOME and PATH, and should point to the Maven installation directory (example: `/path/to/Maven/apache-maven-3.6.3`. Use the relevant echo command to test these (example: `echo $MAVEN_HOME` for Ubuntu/Mac or `echo %MAVEN_HOME%` on Windows). 
 
@@ -154,9 +156,8 @@ Once finished, you can skip to Step 4.
 
 ### Step 2: Clone the Sub Projects
 1. _cd_ to the cloned main project directory: ```cd ./cytoscape```
-1. Execute of of the following command:
+1. Execute the following command:
     - Create new folder under current working directory: ```./cy.sh init```
-    - (Optional) Specify target directory: ```./cy.sh init /path/to/new/cytoscape/source/code```
 1. Now you can see a new subdirectory (also) named **cytoscape**, which contains the sub projects:
 
 ```
@@ -180,7 +181,7 @@ cytoscape     <-- parent level directory
 1. Go into the **cytoscape** subproject directory ```cd ./cytoscape```
 1. Run Maven: ```mvn clean install -U```
     - Option: use ```mvn -fae clean install -U``` (... see below)
-1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 5-120 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
+1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 3-60 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
 
 ### Step 4: Run the new build
 Now you are ready to run the new
@@ -197,17 +198,16 @@ Note that if you want to test the new build with a clean slate, we recommend to 
 
 ### Step 5: Continue with Eclipse project steps
 If you are developing in Eclipse, continue to set up with [these steps](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse).
+You can also configure Eclipse to [debug Cytoscape](https://github.com/cytoscape/cytoscape/wiki/Launching-Cytoscape-from-Eclipse).
 
 ----
 
 ## New from 3.10.0: Core Apps
-___Core Apps___ are Cytoscape apps originally from the core distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
-
-**Note that each core app has its own repository and there is no parent-child relationship between Cytoscape Core and the Apps.  This means, in the core building process, local core apps will not be used in the process.**
+___Core Apps___ are Cytoscape Apps that are included with the Cytoscape distribution.  They are located in their own separate GitHub repositories. Cytoscape depends on the latest version of each core app deployed to the Nexus repository, so you don't need to build core apps to build Cytoscape core.
 
 As of Cytoscape 3.10.0 (March 2023), Cytoscape core distribution comes with the following core apps:
 
-https://github.com/cytoscape/cytoscape-gui-distribution/blob/8a28dead77d39f06747836a326766997974c0e70/assembly/pom.xml#L447
+https://github.com/cytoscape/cytoscape-gui-distribution/blob/develop/assembly/pom.xml#L447
 
 
 ### Optional Projects
@@ -241,7 +241,7 @@ to build the latest version.  You can also use the following command from top-le
 This command simply runs ```mvn clean install``` for each core app directory.
 
 ### Step 3: Install the new build
-To test changes, simply install the JAR using the App Manager or copy to the ```~/CytoscapeConfiguration/3/apps/installed``` directory.
+To test changes, install the JAR from the Cytoscape menu at Apps > App Store > Install Apps from File, or copy to the ```~/CytoscapeConfiguration/3/apps/installed``` directory.
 
 ----
 
@@ -464,8 +464,6 @@ mvn versions:set -DnewVersion=3.x.x
 
 Substitute the desired version for "3.x.x" - if you are starting a new development branch, you would use a version number ending in -SNAPSHOT (i.e. 3.6.0-SNAPSHOT).
 
-Then, change to the "parent" directory and repeat this command. When you are satisfied with the updated version number, run ```mvn versions:commit``` in both directories (run ```mvn versions:revert``` to undo the changes).
-
 Though this will update most instances of the version number, it doesn't get them all. **You will need to manually update the version number in the following places:**
 
 * cytoscape.sh (in gui-distribution/assembly/src/main/bin)
@@ -522,33 +520,21 @@ This script contains machine-specific hard-coded values, and you need to underst
 
 ### Signing Mac Installer
 
-After the installers are built, you will need to sign the dmg installer (in the ```target/install4j``` subdirectory of packaging) on a Mac machine with Xcode installed as well as the Mac App Store certificate 'Developer ID Application'. To sign the Mac DMG run the following code, substituting a valid Cytoscape Mac developer ID and password, as well as the appropriate VERSION and UNIQUE_NOTARIZATION ID:
+After the installers are built, you will need to sign the dmg installers (found in the ```gui-distribution/packaging/target/media``` directory) on a Mac machine with Xcode installed as well as the Mac App Store certificate 'Developer ID Application'. To sign the Mac DMGs run the following code, substituting a valid Cytoscape Mac developer ID and password, as well as the appropriate VERSION and UNIQUE_NOTARIZATION ID:
 
 ```
-xcrun altool --notarize-app --primary-bundle-id {UNIQUE_NOTARIZATION_ID} --username macdeveloper@email.com --password "yourpasswordhere" --file Cytoscape_{VERSION}_macos.dmg
+xcrun notarytool submit --apple-id myappleid@blah.com --team-id {CY_TEAM_ID} --password "app-specific-password" ./Cytoscape_{VERSION}_macos_aarch64.dmg
 ```
+
+The notarization command uses an "App Specific Password"
+* To create an app specific password go to https://account.apple.com/
+* Go to "Sign-In and Security"
+* Select "App Specific Password"
+* Generate a password for "notarytool"
+* You must be logged into the Mac used to notarize with the same apple account.
 
 After this is done, draft a github release at https://github.com/cytoscape/cytoscape/releases and upload the built installers. If you are building a full release, also upload the swing-app-api JAR (in api/swing-app/api/target under the Cytoscape build root) and the API Javadocs (in app-developer/target/API).
 
-## Merging a new release into the master branch
-When a new release is cut, the release branch (or develop branch if that is being used) needs to be merged into the master branch. To do this, first make sure all your changes are checked in. Then, switch to the master branch. You can use the cy.sh script for this - to do that, run from the Cytoscape build root:
-
-```
-./cy.sh switch master
-```
-
-Then, in the root directory and each component subdirectory (api, app-developer, gui-distribution, impl, parent, and support), run the following command:
-
-```
-git merge branch_name
-```
-
-(substitute the branch you're merging into master for branch_name)
-This should merge cleanly - if there are any conflicts you will need to resolve them. When you are satisfied, you will need to push all the changes - once again, you can use cy.sh from the build root:
-
-```
-./cy.sh push
-```
 
 ### Tagging a Release
 After merging a release into the master branch, it should be tagged with the release version number. To do this, we start in the Cytoscape build root with master checked out in all projects and execute the following commands:
@@ -573,11 +559,10 @@ http://chianti.ucsd.edu/cytoscape-news/news.html (in web.ideker.ucsd.edu:/var/ww
 
 
 
-
 ### Updating core apps
 When a core app update is ready to be pushed to the App Store and the development version of Cytoscape, there are a few steps you need to follow.
 
-1. Update the version number in the pom.xml file. The version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
+1. Update the version number in the App's pom.xml file. The version number must be a non-SNAPSHOT version, and the core app must not depend on SNAPSHOT APIs.
 1. Merge your changes to the main repo.
 1. Clone the repository and make sure it compiles.
 1. Tag this place in the repository with the version. ```git tag MAJOR.MINOR.PATCH```. Push this tag to the remote repository using ```git push origin MAJOR.MINOR.PATCH``` to push the current this tag or ```git push origin --tags``` to push all tags in the local repo.
