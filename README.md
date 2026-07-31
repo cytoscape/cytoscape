@@ -90,7 +90,7 @@ mvn -fae install -U -Dmaven.test.skip=true
 
 ### Branch Management
 #### Cytoscape Core
-For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.
+For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.  All of the core repositories are expected to be on the same branch at all times; ```cy switch``` moves them to an existing branch and ```cy branch``` creates a new one across all of them.
 
 #### Core Apps branch management
 Since core apps have their own release cycles, they have different branching scheme.  Usually, features are developed in feature branches, and there is only one common branch called **master**.  Head of the master branch is always the latest development version of the core app.    
@@ -413,19 +413,27 @@ The dependency section starts from [here](https://github.com/cytoscape/cytoscape
 ### Creating a new branch
 At some time, it may be necessary to create a new branch for a Cytoscape release. This is the case if it is necessary to carry on multiple threads of development simultaneously (i.e. 3.5 is in a release candidate stage, but we want to continue development on features destined for 3.6.)  
 
-In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. Change to the root directory of the checked-out code, and run the following command to create a new branch and push this to GitHub (make sure all changes are committed beforehand).
+In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. The **cy** script does this for all of them at once. Change to the root directory of the checked-out code (make sure all changes are committed beforehand) and run:
 
 ```
-git checkout -b 3.x.x
+cy branch 3.x.x
 ```
 
-Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended).
+Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended). This creates the branch in the root repository and in every sub-repository (api, app-developer, gui-distribution, impl, parent, and support), branching each one off the branch it is currently on, and leaves them all checked out on the new branch.
 
-Then, repeat for each individual sub-repository (those being api, app-developer, gui-distribution, impl, parent, and support). Then, run the following in the root directory and each subdirectory to push the new branch to GitHub:
+Before creating anything, the command validates the whole project and **aborts without making a single change** if:
+
+* any sub-repository is not present as a folder in the current directory — run ```cy pull``` first to set up the local repositories;
+* the repositories are not all on the same branch — run ```cy switch BRANCH_NAME``` first to line them up;
+* a branch of the new name already exists in any repository, locally or on _origin_.
+
+The new branches are **local only**. To push them all to GitHub:
 
 ```
-git push
+cy run-all "git push -u origin 3.x.x"
 ```
+
+Note that plain ```cy push``` cannot be used for this first push: it runs ```git push -u origin``` with no branch name, which fails for a branch that does not yet have an upstream. Once the branches have been pushed once, ```cy push``` works normally.
 
 Your new branch has been created and pushed.
 
@@ -437,6 +445,8 @@ cy switch BRANCH_NAME
 ```
 
 where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape subprojects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
+
+To *create* a new branch across all of the subprojects rather than switch to an existing one, use ```cy branch NEW_BRANCH_NAME``` instead — see [Creating a new branch](#creating-a-new-branch) above.
 
 ### Managing Nested Git Repos with a GUI
 The Cytoscape project is organized as a nested set of Git repositories. This provides for modularity and flexibility, but at the cost of greater complexity. The script at the parent level repository helps to manage ```git pull``` commands, but beyond that it can be challenging to manage the state of each repository. Fortunately, there are GUIs that can help:
