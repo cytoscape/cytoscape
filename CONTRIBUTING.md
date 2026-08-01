@@ -92,19 +92,19 @@ git remote add upstream https://github.com/cytoscape/cytoscape.git
 git fetch upstream
 ```
 
-Initialize the Cytoscape core repositories:
+Clone the Cytoscape core repositories. Run this from inside your clone of this
+repository — the script lives here, and it clones the core subprojects into this
+same directory, alongside `pom.xml`:
 
 ```sh
-./cy.sh init
+./cy.sh pull
 ```
 
-The script creates a nested `cytoscape` workspace containing the core subprojects.
+Re-run it any time to update every repository; it clones what is missing and
+pulls what is already there.
 
-To initialize the core projects and core Apps together, use:
-
-```sh
-./cy.sh init-all
-```
+The README has a table of the `cy.sh` commands — each one has a core-repository
+form and a core-app form.
 
 ## Branches
 
@@ -223,7 +223,19 @@ Consider testing with a clean Cytoscape configuration when existing settings or 
 
 ## Core Apps
 
-Core Apps are maintained in separate repositories and may be built independently:
+Core Apps are maintained in separate repositories. To clone them all into an
+`apps` directory inside your clone of this project — and to update them later —
+run:
+
+```sh
+./cy.sh pull-apps
+```
+
+Each command that acts on the core repositories has an apps counterpart:
+`pull-apps`, `switch-apps`, `branch-apps` and `build-apps`. Note that Core Apps
+use `master` rather than `develop`.
+
+An individual App may also be built on its own from its directory:
 
 ```sh
 mvn clean install -U
