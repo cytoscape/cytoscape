@@ -309,6 +309,8 @@ function branch {
   ERRORS=0
   MISSING_REPOS=0
   MISMATCHED_REPOS=0
+  NO_ORIGIN_BRANCH=0
+  THEIR_BRANCH=""
 
   for REPO in "${REPOSITORIES[@]}"; do
     if [[ ! -d $REPO ]]; then
@@ -337,7 +339,17 @@ function branch {
     fi
 
     if [[ $CURRENT_BRANCH != $ORIGIN_BRANCH ]]; then
-      printf '  %-20s %s\n' "$REPO" "MISMATCH: on $CURRENT_BRANCH, expected $ORIGIN_BRANCH"
+      # Distinguish "on the wrong branch" from "does not have that branch at all".
+      # They need completely different advice: the first is fixed by 'switch', the
+      # second cannot be, because there is nothing to switch to.
+      if git -C "$REPO" show-ref --verify --quiet "refs/heads/$ORIGIN_BRANCH" \
+         || git -C "$REPO" show-ref --verify --quiet "refs/remotes/origin/$ORIGIN_BRANCH"; then
+        printf '  %-20s %s\n' "$REPO" "MISMATCH: on $CURRENT_BRANCH, expected $ORIGIN_BRANCH"
+      else
+        printf '  %-20s %s\n' "$REPO" "MISMATCH: on $CURRENT_BRANCH, and has no '$ORIGIN_BRANCH' branch"
+        let NO_ORIGIN_BRANCH=NO_ORIGIN_BRANCH+1
+        THEIR_BRANCH="$CURRENT_BRANCH"
+      fi
       let ERRORS=ERRORS+1
       let MISMATCHED_REPOS=MISMATCHED_REPOS+1
       continue
@@ -366,7 +378,16 @@ function branch {
     if [[ $MISSING_REPOS -ne 0 ]]; then
       echo "Run './$CMDNAME pull' first to set up all of the local repositories." 1>&2
     fi
-    if [[ $MISMATCHED_REPOS -ne 0 ]]; then
+    if [[ $NO_ORIGIN_BRANCH -ne 0 ]]; then
+      # 'switch' cannot help here - there is no such branch to switch to.  This is
+      # what you get on a fork whose top-level repository has a branch of its own.
+      echo "'$ORIGIN_BRANCH' does not exist in $NO_ORIGIN_BRANCH of the sub-projects, so" 1>&2
+      echo "'./$CMDNAME switch $ORIGIN_BRANCH' cannot help - there is nothing to switch to." 1>&2
+      echo "It looks like '$ORIGIN_BRANCH' is local to the top-level repository only." 1>&2
+      echo "Put this repository on a branch the sub-projects also have and branch from" 1>&2
+      echo "there, for example:" 1>&2
+      echo "  git checkout ${THEIR_BRANCH:-$CORE_BRANCH}  &&  ./$CMDNAME branch $NEW_BRANCH" 1>&2
+    elif [[ $MISMATCHED_REPOS -ne 0 ]]; then
       echo "Run './$CMDNAME switch $ORIGIN_BRANCH' to put every repository on the origin branch." 1>&2
     fi
     exit 1

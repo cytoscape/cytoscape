@@ -22,10 +22,30 @@ This document is a guide for developers who want to build the entire Cytoscape c
 You need the following tools to build latest development version of Cytoscape 3.10:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 17](https://adoptium.net/temurin/releases/?version=17)
+* [JDK 17](https://adoptium.net/temurin/releases/?version=17) — but see **Which JDK** below if you also build the core apps
 * [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
+
+### Which JDK
+
+**The core and the core apps do not build with the same JDK.** There is no single version that does both, so pick according to what you are building and switch ```JAVA_HOME``` when you move between them.
+
+| Command | JDK required | Basis |
+| --- | --- | --- |
+| ```pull```, ```pull-apps```, ```switch```, ```switch-apps```, ```branch```, ```branch-apps```, ```status```, ```push```, ```reset``` | any (none) | These only run _git_. No Java is involved. |
+| ```build``` (the core) | **17 or newer** | _parent/pom.xml_ compiles with ```<release>17</release>```, which Maven cannot honour on an older JDK. Verified on JDK 17. |
+| ```build-apps``` (the core apps) | **11**, and **must be older than 16** | The apps compile for Java 11, and they pin _maven-bundle-plugin_ 4.1.0, which fails with a ```ConcurrentModificationException``` on JDK 16 and newer. Confirmed failing on both JDK 17 and JDK 21. |
+
+So a normal core-development setup needs only **JDK 17**. If you also intend to run ```./cy.sh build-apps```, install **JDK 11** alongside it and point ```JAVA_HOME``` at 11 for that command only:
+
+```
+JAVA_HOME=/path/to/jdk-11 ./cy.sh build-apps
+```
+
+On Mac, ```/usr/libexec/java_home -V``` lists the JDKs you have installed and ```JAVA_HOME=$(/usr/libexec/java_home -v 11)``` selects one.
+
+This is a limitation of the core apps' own build configuration, not of _cy.sh_ — a plain ```mvn clean install``` inside an app directory fails the same way on a modern JDK. Fixing it properly means bumping _maven-bundle-plugin_ in each app's own repository.
 
 While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
 
@@ -283,6 +303,12 @@ to build the latest version.  You can also use the following command from top-le
 
 ```
 ./cy.sh build-apps
+```
+
+**Use JDK 11 for this.** The core apps do not build on JDK 16 or newer — see [Which JDK](#which-jdk). If you have been building the core, you are on JDK 17 and will need to switch for this step:
+
+```
+JAVA_HOME=$(/usr/libexec/java_home -v 11) ./cy.sh build-apps
 ```
 
 This command simply runs ```mvn clean install``` for each core app directory.
