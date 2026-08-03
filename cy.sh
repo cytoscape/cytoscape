@@ -511,15 +511,44 @@ function validate-apps {
   done
 }
 
+#################################################################################
+#
+# Builds every core app.  Two things here match what 'build' does for the core
+# repositories, and did not use to:
+#
+#   1. '-DskipTests'.  Every core build function has skipped tests since these
+#      helpers were introduced, but 'build-apps' ran them - so an app's own failing
+#      unit test looked like a broken command.  cy.sh checks out and assembles
+#      source; it is not a CI gate.  Run an app's tests in that app's own build.
+#
+#   2. No early exit.  A single app's failure used to abort the whole run, leaving
+#      every app after it unattempted and its state unknown.  Now each app is
+#      attempted and the failures are listed at the end, which is the same
+#      fail-at-end behaviour '-fae' gives the final core build.  The exit status is
+#      still non-zero if anything failed.
+#
+#################################################################################
 function build-apps {
   require-apps
+
+  FAILED_APPS=()
 
   for app in "${CORE_APPS[@]}"; do
     pushd apps/$app > /dev/null
     echo "- Building $app"
-    mvn clean install || { echo Could not build: $app; exit 1; }
+    mvn clean install -DskipTests || { echo "Could not build: $app" 1>&2; FAILED_APPS[${#FAILED_APPS[@]}]=$app; }
     popd > /dev/null
   done
+
+  echo "------------------------------------------------------------------------"
+  echo "Core apps attempted: ${#CORE_APPS[@]}, built: $(( ${#CORE_APPS[@]} - ${#FAILED_APPS[@]} )), failed: ${#FAILED_APPS[@]}"
+
+  if [ ${#FAILED_APPS[@]} -gt 0 ]; then
+    for app in "${FAILED_APPS[@]}"; do
+      echo "  FAILED: $app"
+    done
+    exit 1
+  fi
 }
 
 function switch-apps {

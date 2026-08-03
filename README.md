@@ -22,30 +22,48 @@ This document is a guide for developers who want to build the entire Cytoscape c
 You need the following tools to build latest development version of Cytoscape 3.10:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 17](https://adoptium.net/temurin/releases/?version=17) — but see **Which JDK** below if you also build the core apps
+* [JDK 17](https://adoptium.net/temurin/releases/?version=17) — see **Which JDK** below
 * [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
 
 ### Which JDK
 
-**The core and the core apps do not build with the same JDK.** There is no single version that does both, so pick according to what you are building and switch ```JAVA_HOME``` when you move between them.
+**JDK 17 builds everything.** Both ```build``` and ```build-apps``` run on it. You do not need a second JDK installed and you do not need to switch ```JAVA_HOME``` between the two.
 
 | Command | JDK required | Basis |
 | --- | --- | --- |
 | ```pull```, ```pull-apps```, ```switch```, ```switch-apps```, ```branch```, ```branch-apps```, ```status```, ```push```, ```reset``` | any (none) | These only run _git_. No Java is involved. |
-| ```build``` (the core) | **17 or newer** | _parent/pom.xml_ compiles with ```<release>17</release>```, which Maven cannot honour on an older JDK. Verified on JDK 17. |
-| ```build-apps``` (the core apps) | **11**, and **must be older than 16** | The apps compile for Java 11, and they pin _maven-bundle-plugin_ 4.1.0, which fails with a ```ConcurrentModificationException``` on JDK 16 and newer. Confirmed failing on both JDK 17 and JDK 21. |
+| ```build``` (the core) | **17 or newer** | _parent/pom.xml_ compiles with ```<release>17</release>```, which Maven cannot honour on an older JDK. Verified building on JDK 17. |
+| ```build-apps``` (the core apps) | **17** | The apps compile for Java 11, a target JDK 17 supports. Every app that reaches the compile step does so successfully on JDK 17, and none of the remaining failures are caused by the JDK. |
 
-So a normal core-development setup needs only **JDK 17**. If you also intend to run ```./cy.sh build-apps```, install **JDK 11** alongside it and point ```JAVA_HOME``` at 11 for that command only:
+Some core apps still fail to build, but **not because of the JDK** — installing an older one will not help. See **Core app build failures** below.
+
+On Mac, ```/usr/libexec/java_home -V``` lists the JDKs you have installed and ```JAVA_HOME=$(/usr/libexec/java_home -v 17)``` selects one.
+
+### Core app build failures
+
+```./cy.sh build-apps``` attempts every core app, prints a summary of what built and what did not, and exits non-zero if anything failed. From a fresh checkout of this tree, 5 of the 20 apps currently build cleanly.
+
+The failures are in the apps' own repositories, not in _cy.sh_ — a plain ```mvn clean install``` inside an app directory fails in exactly the same way. There are two distinct causes.
+
+**1. Apps pinned to _maven-bundle-plugin_ 4.1.0** — _amatreader, analyzer, biopax, core-apps-meta, cyREST, json, idmapper, webservice-biomart-client, copycat-layout_
+
+That plugin embeds _bndlib_ 4.1.0, whose ```aQute.bnd.osgi.Jar.putResource``` structurally modifies a ```TreeMap``` from inside that same map's ```computeIfAbsent``` mapping function. ```TreeMap``` detects the reentrant modification and throws ```ConcurrentModificationException```. This is a bug in bnd, **not a JDK incompatibility** — no JDK version avoids it. Later plugin releases ship a fixed _bndlib_; the core itself uses 5.1.2 and builds without trouble.
+
+**The fix belongs in each app's own repository**: raise that app's ```maven-bundle-plugin.version``` to a release carrying a fixed _bndlib_. _cy.sh_ deliberately does not override it. The plugin is what generates the OSGi manifest — import ranges, exports, and the embedded-dependency closure — so forcing a different version from the outside would make _cy.sh_ produce bundles that differ from the ones the app repositories release, silently and for every app at once. Which bundler an app is built with is the app's decision to record in its own POM.
+
+If you are preparing that change for an app, you can confirm the newer plugin resolves the failure before you touch the POM:
 
 ```
-JAVA_HOME=/path/to/jdk-11 ./cy.sh build-apps
+cd apps/<app> && mvn clean install -DskipTests -Dmaven-bundle-plugin.version=5.1.9
 ```
 
-On Mac, ```/usr/libexec/java_home -V``` lists the JDKs you have installed and ```JAVA_HOME=$(/usr/libexec/java_home -v 11)``` selects one.
+Use that to validate the fix, then commit the version bump in the app's repository — not as a standing workaround for building the tree.
 
-This is a limitation of the core apps' own build configuration, not of _cy.sh_ — a plain ```mvn clean install``` inside an app directory fails the same way on a modern JDK. Fixing it properly means bumping _maven-bundle-plugin_ in each app's own repository.
+**2. Apps whose dependencies no longer resolve** — _opencl-layout, psi-mi, sbml, diffusion, webservice-psicquic-client, file-transfer-app_
+
+These request artifacts that cannot be found: core API jars at versions this tree does not build (_opencl-layout_ wants 3.10.0-SNAPSHOT, _diffusion_ wants 3.9.1, while this tree builds 3.11.0-SNAPSHOT), an unpublished third-party snapshot (_sbml_ wants _jsbml_ 1.6.1-SNAPSHOT), a dependency from the retired SpringSource repository (_webservice-psicquic-client_), a parent POM absent from its own repository (_psi-mi_), and a test-jar that was never published (_file-transfer-app_). Overriding the bundle plugin does not help these — they need attention in their own repositories.
 
 While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
 
@@ -305,13 +323,11 @@ to build the latest version.  You can also use the following command from top-le
 ./cy.sh build-apps
 ```
 
-**Use JDK 11 for this.** The core apps do not build on JDK 16 or newer — see [Which JDK](#which-jdk). If you have been building the core, you are on JDK 17 and will need to switch for this step:
+This uses the same **JDK 17** as the core build — no switching required.
 
-```
-JAVA_HOME=$(/usr/libexec/java_home -v 11) ./cy.sh build-apps
-```
+The command runs ```mvn clean install -DskipTests``` in each core app directory. It does not stop at the first failure: every app is attempted, and a summary of what built and what did not is printed at the end, with a non-zero exit status if anything failed. Expect some apps to fail from a fresh checkout — see [Core app build failures](#core-app-build-failures) for which ones and why.
 
-This command simply runs ```mvn clean install``` for each core app directory.
+Tests are skipped here for the same reason the core build skips them: _cy.sh_ checks out and assembles source, it is not a continuous-integration gate. Run an app's tests from that app's own build.
 
 ### Step 3: Install the new build
 To test changes, install the JAR from the Cytoscape menu at Apps > App Store > Install Apps from File, or copy to the ```~/CytoscapeConfiguration/3/apps/installed``` directory.
