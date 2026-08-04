@@ -26,7 +26,7 @@
 ###############################################################################
 
 # Command Name
-CMDNAME=$(basename $0)
+CMDNAME=$(basename "$0")
 
 # Error Message
 ERROR_MESSAGE="Usage: $CMDNAME [-h] [action]"
@@ -66,7 +66,7 @@ cx diffusion cy-ndex-2 copycat-layout cyBrowser file-transfer-app)
 #######################################
 # Handling command-line arguments     #
 #######################################
-while getopts 'hd:' OPT
+while getopts 'h' OPT
 do
   case $OPT in
     h)  FLG_H=1
@@ -450,9 +450,12 @@ function confirm {
 #   The apps counterpart of 'pull'.  They are cloned into an 'apps' directory
 #   inside your clone of the main project, one directory per app.
 #
-#   Core apps are left on whichever branch they clone with - normally 'master'.
-#   They have their own release cycles and do not use 'develop' the way the core
-#   repositories do, so nothing is checked out for you here.
+#   The core apps have their own release cycles and develop on 'master', not on
+#   'develop' the way the core repositories do.  A newly cloned app is checked out
+#   onto 'master' explicitly, because a clone lands on the remote's default branch
+#   and that is not always 'master'; an app with no 'master' fails here rather
+#   than being left somewhere unexpected.  Apps already present are only pulled,
+#   on whatever branch they are currently on - use 'switch-apps' to move them.
 #
 #################################################################################
 function pull-apps {
@@ -768,8 +771,27 @@ function build {
 # Main workflow
 ###############################################################################
 
-# Save current directory location
-START_DIR=$(pwd)
+# Cytoscape cannot run from a path containing blanks.  The launcher produced by
+# the build - gui-distribution/assembly/target/cytoscape/cytoscape.sh - does not
+# quote its own $0, so 'dirname -- $0' and '[ -h $0 ]' break there and the
+# framework paths come out mangled.  That is a constraint of the
+# cytoscape-gui-distribution repository, not of this script: every command here
+# works fine from a path with blanks.  Refuse up front anyway, because the
+# alternative is discovering it after cloning 26 repositories and building 122
+# modules into a tree that cannot start.
+case $PWD in
+  *[[:space:]]*)
+    echo "FAILED: the current path contains blanks:" 1>&2
+    echo "  $PWD" 1>&2
+    echo "" 1>&2
+    echo "Cytoscape must be built from a path with no spaces or tabs.  The launcher" 1>&2
+    echo "this build produces does not quote its own path and cannot start from such" 1>&2
+    echo "a location (a constraint of the cytoscape-gui-distribution repository)." 1>&2
+    echo "" 1>&2
+    echo "Move or re-clone this repository under a path without blanks, then run" 1>&2
+    echo "'./$CMDNAME $COMMAND' again." 1>&2
+    exit 1 ;;
+esac
 
 case $COMMAND in
   init )    echo "'init' has been removed: it tried to clone the main project, which you" 1>&2

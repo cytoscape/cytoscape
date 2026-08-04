@@ -26,6 +26,15 @@ You need the following tools to build latest development version of Cytoscape 3.
 * [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
+* A working directory whose path contains **no blanks** — see **Paths must not contain blanks** below.
+
+### Paths must not contain blanks
+
+_cy.sh_ refuses to run when the current path contains a space or a tab, and tells you so before it clones or builds anything.
+
+Every _cy.sh_ command itself works fine from such a path. The problem is the launcher the build produces, ```gui-distribution/assembly/target/cytoscape/cytoscape.sh```: it does not quote its own path, so it cannot start from a directory with a blank in it. That launcher comes from the _cytoscape-gui-distribution_ repository, so the fix belongs there rather than here. Until then the check exists so that you find out immediately, rather than after cloning 26 repositories and building 122 modules into a tree that will not start.
+
+Clone this repository somewhere without blanks in the path, and everything works normally.
 
 ### Which JDK
 
@@ -112,13 +121,13 @@ Instead of cloning each sub-project's repository one-by-one, you can use the uti
 Here is the step-by-step guide to build a development version of Cytoscape.
 
 #### tl;dr
-```
+```sh
 git clone https://github.com/cytoscape/cytoscape.git
 cd cytoscape
 ./cy.sh pull
-mvn -fae install -U -Dmaven.test.skip=true
+./cy.sh build
 ./gui-distribution/assembly/target/cytoscape/cytoscape.sh
-````
+```
 [Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse Import Instructions
 
 *NOTE: Build order matters, and ```./cy.sh build``` takes care of it for you — it builds api/event-api, then api, then support, then impl, and only then the whole project. This is not optional: api/pom.xml and impl/pom.xml bind maven-source-plugin's ```aggregate``` goal, which forks a separate build that resolves dependencies from your local maven repository instead of from the reactor. On a first build nothing is in that repository yet, so a plain ```mvn install``` from the top dies at the second of 122 modules looking for event-api. Building the inner pieces first puts them in the repository so those forked builds can find them.*
@@ -682,9 +691,8 @@ The core apps meta-app is a special core app - it contains no code itself beside
 Windows implementations of Git and other tools differ slightly from the above.
 
 * The Windows Git installer creates two application shortcuts: Git Bash and Git GUI. You should use Git Bash for command line operations.
-* When executing the `cy` script, be sure that your current path contains no blanks. The `cy` script's path parser does not understand blanks.
+* Be sure that your current path contains no blanks — see [Paths must not contain blanks](#paths-must-not-contain-blanks). This applies on every platform, not just Windows.
 * You can follow the Git SSH instructions to create your SSH key, but when you start the SSH agent, use `eval $(ssh-agent)` instead of `eval 'ssh-agent' -s`.
-* When running `cy pull`, if you get "flags: FATAL unable to determine getopt version" somewhere in the output, you must be sure to put `getopt` in your PATH. The default location for `getopt` is `C:\Program Files (x86)\GnuWin32\bin`.
 
 
 ### Notes for All Developers

@@ -125,19 +125,16 @@ Core Apps may use a different branching model. Check the target App repository b
 
 ## Building Cytoscape
 
-After initializing the workspace, enter the generated project directory:
+Build the complete project from your clone with:
 
 ```sh
-cd cytoscape
+./cy.sh build
 ```
 
-Build the complete project with:
-
-```sh
-mvn clean install -U
-```
-
-For a first build, do not skip tests. Some modules depend on test outputs produced by earlier modules.
+This builds the modules in the required order and uses the correct test flags. See
+[Building Development Version of Cytoscape 3](README.md#building-development-version-of-cytoscape-3)
+for why the order matters, and why `-DskipTests` is used rather than
+`-Dmaven.test.skip=true`.
 
 After a successful build, the assembled application is located under:
 
