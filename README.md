@@ -22,10 +22,57 @@ This document is a guide for developers who want to build the entire Cytoscape c
 You need the following tools to build latest development version of Cytoscape 3.10:
 
 * Computer with Windows, Mac, or Linux
-* [JDK 17](https://adoptium.net/temurin/releases/?version=17)
+* [JDK 17](https://adoptium.net/temurin/releases/?version=17) — see **Which JDK** below
 * [Maven 3](https://maven.apache.org/)
 * [Git](https://git-scm.com/)
 * _cy.sh_ - Utility script for building Cytoscape core distribution (available in this repository).
+* A working directory whose path contains **no blanks** — see **Paths must not contain blanks** below.
+
+### Paths must not contain blanks
+
+_cy.sh_ refuses to run when the current path contains a space or a tab, and tells you so before it clones or builds anything.
+
+Every _cy.sh_ command itself works fine from such a path. The problem is the launcher the build produces, ```gui-distribution/assembly/target/cytoscape/cytoscape.sh```: it does not quote its own path, so it cannot start from a directory with a blank in it. That launcher comes from the _cytoscape-gui-distribution_ repository, so the fix belongs there rather than here. Until then the check exists so that you find out immediately, rather than after cloning 26 repositories and building 122 modules into a tree that will not start.
+
+Clone this repository somewhere without blanks in the path, and everything works normally.
+
+### Which JDK
+
+**JDK 17 builds everything.** Both ```build``` and ```build-apps``` run on it. You do not need a second JDK installed and you do not need to switch ```JAVA_HOME``` between the two.
+
+| Command | JDK required | Basis |
+| --- | --- | --- |
+| ```pull```, ```pull-apps```, ```switch```, ```switch-apps```, ```branch```, ```branch-apps```, ```status```, ```push```, ```reset``` | any (none) | These only run _git_. No Java is involved. |
+| ```build``` (the core) | **17 or newer** | _parent/pom.xml_ compiles with ```<release>17</release>```, which Maven cannot honour on an older JDK. Verified building on JDK 17. |
+| ```build-apps``` (the core apps) | **17** | The apps compile for Java 11, a target JDK 17 supports. Every app that reaches the compile step does so successfully on JDK 17, and none of the remaining failures are caused by the JDK. |
+
+Some core apps still fail to build, but **not because of the JDK** — installing an older one will not help. See **Core app build failures** below.
+
+On Mac, ```/usr/libexec/java_home -V``` lists the JDKs you have installed and ```JAVA_HOME=$(/usr/libexec/java_home -v 17)``` selects one.
+
+### Core app build failures
+
+```./cy.sh build-apps``` attempts every core app, prints a summary of what built and what did not, and exits non-zero if anything failed. From a fresh checkout of this tree, 5 of the 20 apps currently build cleanly.
+
+The failures are in the apps' own repositories, not in _cy.sh_ — a plain ```mvn clean install``` inside an app directory fails in exactly the same way. There are two distinct causes.
+
+**1. Apps pinned to _maven-bundle-plugin_ 4.1.0** — _amatreader, analyzer, biopax, core-apps-meta, cyREST, json, idmapper, webservice-biomart-client, copycat-layout_
+
+That plugin embeds _bndlib_ 4.1.0, whose ```aQute.bnd.osgi.Jar.putResource``` structurally modifies a ```TreeMap``` from inside that same map's ```computeIfAbsent``` mapping function. ```TreeMap``` detects the reentrant modification and throws ```ConcurrentModificationException```. This is a bug in bnd, **not a JDK incompatibility** — no JDK version avoids it. Later plugin releases ship a fixed _bndlib_; the core itself uses 5.1.2 and builds without trouble.
+
+**The fix belongs in each app's own repository**: raise that app's ```maven-bundle-plugin.version``` to a release carrying a fixed _bndlib_. _cy.sh_ deliberately does not override it. The plugin is what generates the OSGi manifest — import ranges, exports, and the embedded-dependency closure — so forcing a different version from the outside would make _cy.sh_ produce bundles that differ from the ones the app repositories release, silently and for every app at once. Which bundler an app is built with is the app's decision to record in its own POM.
+
+If you are preparing that change for an app, you can confirm the newer plugin resolves the failure before you touch the POM:
+
+```
+cd apps/<app> && mvn clean install -DskipTests -Dmaven-bundle-plugin.version=5.1.9
+```
+
+Use that to validate the fix, then commit the version bump in the app's repository — not as a standing workaround for building the tree.
+
+**2. Apps whose dependencies no longer resolve** — _opencl-layout, psi-mi, sbml, diffusion, webservice-psicquic-client, file-transfer-app_
+
+These request artifacts that cannot be found: core API jars at versions this tree does not build (_opencl-layout_ wants 3.10.0-SNAPSHOT, _diffusion_ wants 3.9.1, while this tree builds 3.11.0-SNAPSHOT), an unpublished third-party snapshot (_sbml_ wants _jsbml_ 1.6.1-SNAPSHOT), a dependency from the retired SpringSource repository (_webservice-psicquic-client_), a parent POM absent from its own repository (_psi-mi_), and a test-jar that was never published (_file-transfer-app_). Overriding the bundle plugin does not help these — they need attention in their own repositories.
 
 While you can use any IDE to maintain Cytoscape 3, a popular IDE for this is Eclipse, which has its own Maven and Git support, too. However, for the initial repository clones and builds, we recommend that you follow the command line-based procedure below, and then switch to whichever IDE you prefer.
 
@@ -74,26 +121,45 @@ Instead of cloning each sub-project's repository one-by-one, you can use the uti
 Here is the step-by-step guide to build a development version of Cytoscape.
 
 #### tl;dr
-```
+```sh
 git clone https://github.com/cytoscape/cytoscape.git
 cd cytoscape
-./cy.sh init
-cd cytoscape
-mvn -fae install -U -Dmaven.test.skip=true
+./cy.sh pull
+./cy.sh build
 ./gui-distribution/assembly/target/cytoscape/cytoscape.sh
-````
+```
 [Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse Import Instructions
 
-*NOTE: For first-time and new release builds, the build order matters and you may see an error involving event-api. The solution is to first build api/event-api, then build api, then build the entire package. Oh, and you can't skip tests for your first build; some poms depend on test outputs.*
+*NOTE: Build order matters, and ```./cy.sh build``` takes care of it for you — it builds api/event-api, then api, then support, then impl, and only then the whole project. This is not optional: api/pom.xml and impl/pom.xml bind maven-source-plugin's ```aggregate``` goal, which forks a separate build that resolves dependencies from your local maven repository instead of from the reactor. On a first build nothing is in that repository yet, so a plain ```mvn install``` from the top dies at the second of 122 modules looking for event-api. Building the inner pieces first puts them in the repository so those forked builds can find them.*
+
+*ANOTHER NOTE: Test compilation cannot be skipped — 34 of the poms depend on another module's test-jar. Use ```-DskipTests``` (compiles tests, does not run them), never ```-Dmaven.test.skip=true``` (does not compile them at all, so the test-jars are never produced and everything needing one fails). ```./cy.sh build``` already does this.*
 
 *ANOTHER NOTE: If you see errors about "Could not transfer artifact" and "Blocked mirror for repositories," then you may be running a newer version of Maven that doesn't work for our repo at this time. Try Maven v3.6.0*
 
+### cy.sh commands
+Cytoscape core is spread over seven repositories, and the core apps over twenty more. The _cy_ script drives all of them together, so you rarely run _git_ or _maven_ in a single repository by hand. Every command below is run from inside your clone of this repository and acts on **all** of the repositories in its column:
+
+| | Core repositories | Core apps |
+| --- | --- | --- |
+| Get them locally, and update them later | ```./cy.sh pull``` | ```./cy.sh pull-apps``` |
+| Switch to an existing branch | ```./cy.sh switch BRANCH``` | ```./cy.sh switch-apps BRANCH``` |
+| Create a new branch | ```./cy.sh branch NEW_BRANCH``` | ```./cy.sh branch-apps NEW_BRANCH``` |
+| Build | ```./cy.sh build``` | ```./cy.sh build-apps``` |
+
+The core repositories sit in the root of your clone; the core apps sit under ```apps/```. The two columns are independent of each other — the core repositories track **develop** while the core apps track **master** — so a command in one column never touches the other.
+
+If you are unsure whether you want ```switch``` or ```branch```, see [Optional: Working on a different branch](#optional-working-on-a-different-branch) — the short version is that ```switch``` only moves to a branch that already exists and ```branch``` only creates one that does not.
+
+Also available: ```status```, ```push```, ```reset```, ```run-all``` and ```validate-apps```.
+
 ### Branch Management
 #### Cytoscape Core
-For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.
+For the core projects, development version always uses the branch named **develop**.  **Master** branch is only for the final release.  If you want to build the latest development version of Cytoscape, you should use **develop** branch for all sub-projects.  All of the core repositories are expected to be on the same branch at all times.
 
 #### Core Apps branch management
 Since core apps have their own release cycles, they have different branching scheme.  Usually, features are developed in feature branches, and there is only one common branch called **master**.  Head of the master branch is always the latest development version of the core app.    
+
+Because the apps track **master** rather than _develop_, the two columns of the command table are never in step with each other, and that is expected.  One thing to know about ```branch-apps```: it requires all of the core apps to be on the same branch to begin with, since that shared branch is what the new one is cut from — run ```switch-apps``` first if they have drifted apart.
 
 ### Step 1: Clone the Main Project
 1. Install required tools: JDK, Maven, and Git. On some systems, these may be preinstalled - you can use those versions if they are relatively recent. Released versions of Cytoscape use
@@ -140,48 +206,74 @@ JDKs from [Eclipse Adoptium](https://adoptium.net/).
     - Now you can see a new directory named **cytoscape**:
 
 ```
-cytoscape     <-- parent level directory
+cytoscape     <-- your working directory from here on
 ├── README.md
 ├── cy.sh
 └── pom.xml
 ```
 
-#### Shortcut
-If you want to skip the following steps, you can use this command to clone and build all core projects and core apps:
-
-```
-./cy.sh init-all
-```
-Once finished, you can skip to Step 4.
+Cloning this repository is always the first step: the _cy_ script lives in it, so you need it on disk before you can run any of the commands below. Everything from here on is run from inside this directory.
 
 ### Step 2: Clone the Sub Projects
-1. _cd_ to the cloned main project directory: ```cd ./cytoscape```
-1. Execute the following command:
-    - Create new folder under current working directory: ```./cy.sh init```
-1. Now you can see a new subdirectory (also) named **cytoscape**, which contains the sub projects:
+The core of Cytoscape is split across six more repositories — _api_, _impl_, _parent_, _support_, _gui-distribution_ and _app-developer_. They are not submodules of this one, so cloning this repository does not bring them with it. The _cy_ script clones them for you.
+
+1. _cd_ into the directory you cloned in Step 1: ```cd ./cytoscape```
+1. Run: ```./cy.sh pull```
+1. The six sub projects are now folders inside it, alongside _pom.xml_:
 
 ```
-cytoscape     <-- parent level directory
+cytoscape     <-- your working directory
 ├── README.md
 ├── cy.sh
-├── cytoscape     <-- subproject directory
-│   ├── README.md
-│   ├── api
-│   ├── app-developer
-│   ├── cy.sh
-│   ├── gui-distribution
-│   ├── impl
-│   ├── parent
-│   ├── pom.xml
-│   └── support
-└── pom.xml
+├── api
+├── app-developer
+├── gui-distribution
+├── impl
+├── parent
+├── pom.xml
+└── support
 ```
 
+Run ```./cy.sh pull``` again whenever you want to bring everything up to date: it clones whatever is missing and pulls whatever is already there, so it is both the setup command and the update command.
+
+It works over HTTPS or SSH — the protocol is taken from the ```origin``` remote of the clone you are in, so the sub projects are fetched the same way you fetched this one. Set ```CY_GIT_URL``` to override that, e.g. ```CY_GIT_URL=git@github.com:my-fork/ ./cy.sh pull```.
+
+The sub projects must sit directly inside your clone, as shown above. The Maven build and the other _cy_ commands all expect that layout, and ```pull``` is what produces it.
+
+#### Optional: Working on a different branch
+```pull``` brings the sub projects down on **develop**, and the core repositories are expected to stay on the same branch as each other. Do not check out a branch in one repository by hand: use the **cy** script so that all of them move together.
+
+**Which command you need depends on whether the branch already exists.**
+
+| The branch you want to work on... | Command | What it does |
+| --- | --- | --- |
+| **already exists** — _develop_, _master_, a release branch someone else created | ```./cy.sh switch BRANCH_NAME``` | Checks that existing branch out in every repository. |
+| **does not exist yet** — you are the one starting it | ```./cy.sh branch NEW_BRANCH_NAME``` | Creates the new branch in every repository, branching off the branch they are all currently on, and leaves them checked out on it. |
+
+The two are not interchangeable, and each one refuses the other's job:
+
+* ```switch``` only checks out a branch that is already there — it cannot create one. Pointed at a name that does not exist, it reports that it could not check it out and carries on to the next repository, which can leave the project half switched.
+* ```branch``` only creates. If the name is already taken in any repository it stops and creates nothing, rather than quietly reusing what is there.
+
+So to start new work, first ```switch``` to the branch you want to base it on (if you are not already on it), then ```branch``` to create the new one from that point. For example, to start a 3.11 release branch from _develop_:
+
+```
+./cy.sh switch develop
+./cy.sh branch release/3.11
+```
+
+```branch``` validates every repository before it changes anything, and stops without creating a single branch if a sub project is missing, if they are not all on the same branch, or if the new name is already taken. See [Creating a new branch](#creating-a-new-branch) for the full details.
+
+Build from whichever branch you end up on — the steps below are the same either way.
+
 ### Step 3: Building Cytoscape
-1. Go into the **cytoscape** subproject directory ```cd ./cytoscape```
-1. Run Maven: ```mvn clean install -U```
-    - Option: use ```mvn -fae clean install -U``` (... see below)
+1. Stay in your clone — the directory containing _pom.xml_ and the sub projects
+1. Run: ```./cy.sh build```
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 3-60 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
+
+Use ```./cy.sh build``` rather than calling Maven yourself. A plain ```mvn install``` from the top **fails on a first build** — see the note about build order above — whereas ```cy.sh build``` runs the sub-builds in the order that works and passes the right flags. It is safe to re-run at any time; it works the same on a fresh clone and on an up-to-date one.
+
+If you do want to drive Maven directly, the equivalent of the final step is ```mvn -fae install -U -DskipTests```, but it only works once ```api```, ```support``` and ```impl``` have already been installed.
 
 ### Step 4: Run the new build
 Now you are ready to run the new
@@ -221,7 +313,9 @@ This repository contains sample code for app developers and it will not be inclu
 All of the core apps are maintained in their own repository and if you want to try the latest version of the core app, you need to build them separately.
 
 ### Step 1: Checking out core apps
-Assuming you are in the subproject directory of Cytoscape project (not the parent level), then ```./cy.sh apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory.  All of the core apps are hosted under this org account:
+From your clone of the main project, ```./cy.sh pull-apps``` will check out every core app into the ```apps``` subdirectory. Each is hosted in its own GitHub repository, and changes can be committed directly to each directory.
+
+Run it again any time to bring the apps up to date — like ```pull``` for the core repositories, it clones whatever is missing and pulls whatever is already there, so it is both the setup command and the update command.  All of the core apps are hosted under this org account:
 
 * [Cytoscape Consortium GitHub Repository](https://github.com/cytoscape)
 
@@ -238,7 +332,11 @@ to build the latest version.  You can also use the following command from top-le
 ./cy.sh build-apps
 ```
 
-This command simply runs ```mvn clean install``` for each core app directory.
+This uses the same **JDK 17** as the core build — no switching required.
+
+The command runs ```mvn clean install -DskipTests``` in each core app directory. It does not stop at the first failure: every app is attempted, and a summary of what built and what did not is printed at the end, with a non-zero exit status if anything failed. Expect some apps to fail from a fresh checkout — see [Core app build failures](#core-app-build-failures) for which ones and why.
+
+Tests are skipped here for the same reason the core build skips them: _cy.sh_ checks out and assembles source, it is not a continuous-integration gate. Run an app's tests from that app's own build.
 
 ### Step 3: Install the new build
 To test changes, install the JAR from the Cytoscape menu at Apps > App Store > Install Apps from File, or copy to the ```~/CytoscapeConfiguration/3/apps/installed``` directory.
@@ -413,19 +511,27 @@ The dependency section starts from [here](https://github.com/cytoscape/cytoscape
 ### Creating a new branch
 At some time, it may be necessary to create a new branch for a Cytoscape release. This is the case if it is necessary to carry on multiple threads of development simultaneously (i.e. 3.5 is in a release candidate stage, but we want to continue development on features destined for 3.6.)  
 
-In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. Change to the root directory of the checked-out code, and run the following command to create a new branch and push this to GitHub (make sure all changes are committed beforehand).
+In this case, you will need to create a new branch for each repository in Cytoscape based on the current working branch. The **cy** script does this for all of them at once. Change to the root directory of the checked-out code (make sure all changes are committed beforehand) and run:
 
 ```
-git checkout -b 3.x.x
+cy branch 3.x.x
 ```
 
-Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended).
+Substitute the desired name of the new branch for "3.x.x" (the version number of the release is recommended). This creates the branch in the root repository and in every sub-repository (api, app-developer, gui-distribution, impl, parent, and support), branching each one off the branch it is currently on, and leaves them all checked out on the new branch.
 
-Then, repeat for each individual sub-repository (those being api, app-developer, gui-distribution, impl, parent, and support). Then, run the following in the root directory and each subdirectory to push the new branch to GitHub:
+Before creating anything, the command validates the whole project and **aborts without making a single change** if:
+
+* any sub-repository is not present as a folder in the current directory — run ```cy pull``` first to set up the local repositories;
+* the repositories are not all on the same branch — run ```cy switch BRANCH_NAME``` first to line them up;
+* a branch of the new name already exists in any repository, locally or on _origin_.
+
+The new branches are **local only**. To push them all to GitHub:
 
 ```
-git push
+cy run-all "git push -u origin 3.x.x"
 ```
+
+Note that plain ```cy push``` cannot be used for this first push: it runs ```git push -u origin``` with no branch name, which fails for a branch that does not yet have an upstream. Once the branches have been pushed once, ```cy push``` works normally.
 
 Your new branch has been created and pushed.
 
@@ -437,6 +543,8 @@ cy switch BRANCH_NAME
 ```
 
 where **BRANCH_NAME** is the name of the branch you want to switch.  All Cytoscape subprojects are following git-flow style branching scheme.  *Master* is used only for releases, and *develop* is the latest development branch.
+
+To *create* a new branch across all of the subprojects rather than switch to an existing one, use ```cy branch NEW_BRANCH_NAME``` instead — see [Creating a new branch](#creating-a-new-branch) above.
 
 ### Managing Nested Git Repos with a GUI
 The Cytoscape project is organized as a nested set of Git repositories. This provides for modularity and flexibility, but at the cost of greater complexity. The script at the parent level repository helps to manage ```git pull``` commands, but beyond that it can be challenging to manage the state of each repository. Fortunately, there are GUIs that can help:
@@ -583,16 +691,15 @@ The core apps meta-app is a special core app - it contains no code itself beside
 Windows implementations of Git and other tools differ slightly from the above.
 
 * The Windows Git installer creates two application shortcuts: Git Bash and Git GUI. You should use Git Bash for command line operations.
-* When executing the `cy init` script, be sure that your current path contains no blanks. The `cy` script's path parser does not understand blanks.
+* Be sure that your current path contains no blanks — see [Paths must not contain blanks](#paths-must-not-contain-blanks). This applies on every platform, not just Windows.
 * You can follow the Git SSH instructions to create your SSH key, but when you start the SSH agent, use `eval $(ssh-agent)` instead of `eval 'ssh-agent' -s`.
-* When running `cy init`, if you get "flags: FATAL unable to determine getopt version" somewhere in the output, you must be sure to put `getopt` in your PATH. The default location for `getopt` is `C:\Program Files (x86)\GnuWin32\bin`.
 
 
 ### Notes for All Developers
-* Note that the `cy init` script accepts a path as a parameter. The path specifies where Cytoscape projects should be installed. Omitting the path reverts to the current working directory.
+* Note that the `cy` script always works on the clone it is run from — the sub projects are cloned into that directory. There is no option to install them somewhere else; clone this repository where you want the projects to live.
 * Be sure you have installed Java JDK, not Java JRE.
 * If you are developing on a virtual machine, be sure to configure around 8GB RAM and 50GB disk.
-* To create a Cytoscape project in Eclipse (once you have run `cy init`), select File | Import, and then select Maven | Existing Maven Projects. Browse to the Cytoscape directory created by `cy init`, and note that all pom.xml files are found. To finish the import, wait for all projects to be created and compiled. This may take several minutes.
+* To create a Cytoscape project in Eclipse (once you have run `cy pull`), select File | Import, and then select Maven | Existing Maven Projects. Browse to your clone of this repository, and note that all pom.xml files are found. To finish the import, wait for all projects to be created and compiled. This may take several minutes.
 * To add all Cytoscape sources, use the Source tab in the Debug Configurations dialog, click the Add button, choose the Java Project container, and select all projects.
 * To edit-compile-run, make your changes in the project you're working in. From Eclipse, you can Run As ... Maven Install. Eclipse will build the .class files automatically, so Maven's job is to create the .jar and promote it to private Maven repository. An unresolved compile issue will show in the Cytoscape console window when you run ... Maven doesn't complain, and Eclipse complains visually. Alternative: in Git Bash, set pwd to project directory (e.g., welcome-impl) and do `mvn clean install -U`.
 
