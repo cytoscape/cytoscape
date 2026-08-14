@@ -130,11 +130,11 @@ cd cytoscape
 ```
 [Eclipse Users](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse) - Eclipse Import Instructions
 
-*NOTE: Build order matters, and ```./cy.sh build``` takes care of it for you — it builds api/event-api, then api, then support, then impl, and only then the whole project. This is not optional: api/pom.xml and impl/pom.xml bind maven-source-plugin's ```aggregate``` goal, which forks a separate build that resolves dependencies from your local maven repository instead of from the reactor. On a first build nothing is in that repository yet, so a plain ```mvn install``` from the top dies at the second of 122 modules looking for event-api. Building the inner pieces first puts them in the repository so those forked builds can find them.*
+*NOTE: A plain ```mvn clean install -DskipTests``` from the top now works, including on a first build with an empty local maven repository. ```./cy.sh build``` still works and is still the easy path, but it is no longer required. This was not always true: api/pom.xml and impl/pom.xml used to bind maven-source-plugin's ```aggregate``` goal in the default build, and that goal forks a separate build which resolves dependencies from your local maven repository instead of from the reactor — so a first build died at the second of 122 modules looking for event-api, and the inner projects had to be built first to seed the repository. That execution now lives in a ```sources``` profile; see [Building the app-developer distribution](#building-the-app-developer-distribution).*
 
 *ANOTHER NOTE: Test compilation cannot be skipped — 34 of the poms depend on another module's test-jar. Use ```-DskipTests``` (compiles tests, does not run them), never ```-Dmaven.test.skip=true``` (does not compile them at all, so the test-jars are never produced and everything needing one fails). ```./cy.sh build``` already does this.*
 
-*ANOTHER NOTE: If you see errors about "Could not transfer artifact" and "Blocked mirror for repositories," then you may be running a newer version of Maven that doesn't work for our repo at this time. Try Maven v3.6.0*
+*ANOTHER NOTE: Errors about "Could not transfer artifact" and "Blocked mirror for repositories" mean Maven has refused a plain-```http://``` repository, which it has done by default since 3.8.1. Every repository in this tree is now ```https://```, so a current Maven is the right choice — 3.9.x is what these instructions are verified against. Do not downgrade to Maven 3.6.0 to work around it. If you still hit this, check for stale ```http://``` repository URLs in your own ```~/.m2/settings.xml```.*
 
 ### cy.sh commands
 Cytoscape core is spread over seven repositories, and the core apps over twenty more. The _cy_ script drives all of them together, so you rarely run _git_ or _maven_ in a single repository by hand. Every command below is run from inside your clone of this repository and acts on **all** of the repositories in its column:
@@ -271,9 +271,11 @@ Build from whichever branch you end up on — the steps below are the same eithe
 1. Run: ```./cy.sh build```
 1. Have a coffee break...  It depends on your machine specification and internet connection speed, but will take 3-60 minutes.  When you build Cytoscape for the first time, it will take a long time because maven downloads all dependencies from the remote server.
 
-Use ```./cy.sh build``` rather than calling Maven yourself. A plain ```mvn install``` from the top **fails on a first build** — see the note about build order above — whereas ```cy.sh build``` runs the sub-builds in the order that works and passes the right flags. It is safe to re-run at any time; it works the same on a fresh clone and on an up-to-date one.
+```./cy.sh build``` is the easy path — it passes the right flags and is safe to re-run at any time, working the same on a fresh clone and on an up-to-date one.
 
-If you do want to drive Maven directly, the equivalent of the final step is ```mvn -fae install -U -DskipTests```, but it only works once ```api```, ```support``` and ```impl``` have already been installed.
+Driving Maven yourself also works now, from the top, on a first build: ```mvn clean install -DskipTests```. (Before [#35](https://github.com/cytoscape/cytoscape/issues/35) this failed unless ```api```, ```support``` and ```impl``` had already been installed.)
+
+If you want the app-developer sources JARs as well, see [Building the app-developer distribution](#building-the-app-developer-distribution) — that needs a second Maven pass.
 
 ### Step 4: Run the new build
 Now you are ready to run the new
@@ -291,6 +293,18 @@ Note that if you want to test the new build with a clean slate, we recommend to 
 ### Step 5: Continue with Eclipse project steps
 If you are developing in Eclipse, continue to set up with [these steps](https://github.com/cytoscape/cytoscape/wiki/Importing-Git-Repos-in-Eclipse).
 You can also configure Eclipse to [debug Cytoscape](https://github.com/cytoscape/cytoscape/wiki/Launching-Cytoscape-from-Eclipse).
+
+### Building the app-developer distribution
+The app-developer kit ships two aggregated sources JARs — ```api-<version>-sources.jar``` and ```impl-<version>-sources.jar``` — so that app authors can attach the Cytoscape sources in their IDE while debugging. Those two JARs are built by the ```sources``` profile, which is **not** part of the default build, so producing a complete kit takes two Maven passes:
+
+```sh
+mvn clean install -DskipTests
+mvn install -Psources -DskipTests
+```
+
+The second command has to be a **separate** invocation — you cannot simply add ```-Psources``` to the first one. The profile turns on maven-source-plugin's ```aggregate``` goal, which forks a build of every module and resolves those modules from your local maven repository rather than from the reactor. On a cold repository it would therefore look for artifacts that have not been built yet and fail, which is exactly the problem described in [#35](https://github.com/cytoscape/cytoscape/issues/35). The first pass installs everything, so the second pass resolves cleanly — and it is quick, because every module is already up to date.
+
+You only need this when you are producing the app-developer kit. A normal development build does not use those JARs: skip the second pass and the distribution still builds, just without them.
 
 ----
 
