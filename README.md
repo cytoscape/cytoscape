@@ -473,11 +473,14 @@ Though this will update most instances of the version number, it doesn't get the
 * parent/pom.xml (look for taglets)
 * pom.xml in app-developer, gui-distribution, impl, support (look for properties tag)
 * pom.xml in src/main/resources/archetype-resources/pom.xml (for each archetype subdirectory in support/archetypes)
+* **support/archetypes/cytoscape-starter-app/src/main/resources/archetype-resources/pom.xml — check the ```<cytoscape.version>``` property specifically.** Four of the five archetypes repeat the version literally in each dependency, so a search for the outgoing version finds them. This one indirects through a property that feeds eight dependency versions, and the property can be left holding a version unrelated to the one you are replacing — so searching for the outgoing version will not find it. It sat at 3.8.0 for several releases before anyone noticed, which meant every app generated from that archetype built against 3.8.0 (cytoscape/cytoscape#35).
 * pom.xml in event-impl/it, model-impl/it, model-impl/performance, session-impl/impl, session-impl/integration-test, viewmodel-impl/it, vizmap-impl/it, work-swing-impl/it
 
 You can edit by hand, or use grep/sed to update these numbers.  Push and commit all changes to GitHub when you are done updating the version numbers.
 
 #### Tip: To find all instances of a version, run ```grep -ri "3.X.X-SNAPSHOT" .``` from the parent directory.
+
+#### Tip: That search only finds the version you are replacing. To catch places already holding some other stale version, also run ```grep -rn "<cytoscape.version>" .``` and check each hit by eye.
 
 ## Releasing unreleased updates to core apps
 Typically, updates to core apps will be released separately from the Cytoscape core development cycle, and the development branch will be updated to use any new updates as they are released. However, if a core app depends on an unreleased API in the development version of Cytoscape, this won't work. In that case, we have to release the unreleased core app when Cytoscape is being released.
