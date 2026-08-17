@@ -716,10 +716,22 @@ function run-all {
 # Build the core.  Works from a completely empty local maven repository, so it
 # can be used for a first build and for every build after that.
 #
-#   Two things make a plain 'mvn install' from the top fail on a first build,
-#   and both are worked around here:
+#   Three things make a plain 'mvn install' from the top fail on a first build,
+#   and all three are worked around here:
 #
-#   1. api/pom.xml and impl/pom.xml both bind maven-source-plugin's 'aggregate'
+#   1. 'parent' is the POM every other module inherits from, and it has to be
+#      installed before any later stage resolves an api or impl artifact as a
+#      DEPENDENCY.  The poms installed by those stages name org.cytoscape:parent
+#      as their parent, and resolving a dependency's descriptor does not honour
+#      <relativePath> the way an in-reactor build does - so '../parent' on disk
+#      does not help, the POM has to be in the local repository.
+#      On 'develop' this gap is invisible: parent:pom:<version>-SNAPSHOT is
+#      published to nexus, so maven quietly downloads it.  On a release branch
+#      the version has been bumped and is not published anywhere yet, nothing
+#      can resolve it, and the build dies in 'support' on task-testing-impl
+#      looking for swing-application-api.
+#
+#   2. api/pom.xml and impl/pom.xml both bind maven-source-plugin's 'aggregate'
 #      goal, which FORKS a generate-sources lifecycle over their modules.  A
 #      forked lifecycle resolves dependencies from the local repository instead
 #      of the reactor, so it looks for event-api before the reactor has built it
@@ -733,7 +745,7 @@ function run-all {
 #      Note '-Dmaven.source.skip=true' does NOT avoid this - the fork is planned
 #      before the skip is evaluated.
 #
-#   2. '-DskipTests', never '-Dmaven.test.skip=true'.  34 poms depend on another
+#   3. '-DskipTests', never '-Dmaven.test.skip=true'.  34 poms depend on another
 #      module's test-jar, and the app-developer archetype integration tests want
 #      event-api's test-jar too.  'maven.test.skip' skips compiling tests at all,
 #      so those test-jars are never produced and everything needing one fails.
@@ -741,6 +753,10 @@ function run-all {
 #
 #################################################################################
 function build {
+  echo "- Seeding parent (the POM every other module inherits from)"
+  (cd parent && mvn install -U -DskipTests) \
+    || { echo "Failed to build parent" 1>&2; exit 1; }
+
   echo "- Seeding event-api (needed before the api source:aggregate fork runs)"
   (cd api/event-api && mvn install -U -DskipTests) \
     || { echo "Failed to build api/event-api" 1>&2; exit 1; }
