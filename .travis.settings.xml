@@ -32,7 +32,7 @@
             <enabled>false</enabled>
           </releases>
           <name>Cytoscape Snapshots</name>
-          <url>http://nrnb-nexus.ucsd.edu/repository/cytoscape_snapshots/</url>
+          <url>https://nrnb-nexus.ucsd.edu/repository/cytoscape_snapshots/</url>
         </repository>
         <repository>
           <id>cytoscape_releases</id>
@@ -43,7 +43,7 @@
             <enabled>true</enabled>
           </releases>
           <name>Cytoscape Releases</name>
-          <url>http://nrnb-nexus.ucsd.edu/repository/cytoscape_releases/</url>
+          <url>https://nrnb-nexus.ucsd.edu/repository/cytoscape_releases/</url>
         </repository>
         <repository>
           <id>cytoscape_thirdparty</id>
@@ -54,12 +54,12 @@
             <enabled>true</enabled>
           </releases>
           <name>Cytoscape Third Party</name>
-          <url>http://nrnb-nexus.ucsd.edu/repository/cytoscape_thirdparty/</url>
+          <url>https://nrnb-nexus.ucsd.edu/repository/cytoscape_thirdparty/</url>
         </repository>
         <repository>
           <id>central</id>
           <name>Central Repository</name>
-          <url>http://repo.maven.apache.org/maven2</url>
+          <url>https://repo.maven.apache.org/maven2</url>
           <releases>
             <enabled>true</enabled>
           </releases>
