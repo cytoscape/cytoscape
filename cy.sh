@@ -753,6 +753,18 @@ function run-all {
 #
 #################################################################################
 function build {
+  # Remove psidev .mw caches left behind by any pre-3.10.5 builds.  Those builds 
+  # declared EBI's 'psidev' repository, so maven cached EBI's full POMs; each names a parent
+  # whose POM declares dead plain-http repositories that maven 3.8.1+ blocks, and the
+  # cached copy is used in preference to refetching.
+  #
+  # Without this, third-party fails with "Could not collect dependencies", caused by
+  # "psidev.psi.tools:master-pom:pom:3 (present, but unavailable) ... Blocked mirror".
+  if grep -rq '<parent>' "$HOME/.m2/repository/psidev" --include='*.pom' 2>/dev/null; then
+    echo "- Removing a stale psidev cache left by a pre-3.10.5 build"
+    rm -rf "$HOME/.m2/repository/psidev"
+  fi
+
   echo "- Seeding parent (the POM every other module inherits from)"
   (cd parent && mvn install -U -DskipTests) \
     || { echo "Failed to build parent" 1>&2; exit 1; }
